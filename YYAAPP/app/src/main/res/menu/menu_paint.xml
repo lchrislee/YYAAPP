@@ -15,4 +15,19 @@
         android:icon="@android:drawable/ic_menu_delete"
         app:showAsAction="ifRoom"
         />
+
+    <item
+        android:id="@+id/menu_paint_undo"
+        android:title="@string/menu_paint_undo"
+        android:icon="@android:drawable/ic_menu_revert"
+        app:showAsAction="ifRoom"
+        />
+
+    <item
+        android:id="@+id/menu_paint_redo"
+        android:title="@string/menu_paint_redo"
+        android:icon="@android:drawable/ic_menu_rotate"
+        app:showAsAction="ifRoom"
+        />
+
 </menu>

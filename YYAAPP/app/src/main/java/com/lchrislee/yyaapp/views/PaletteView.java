@@ -13,12 +13,13 @@ import android.widget.LinearLayout;
 import com.lchrislee.yyaapp.R;
 
 public class PaletteView extends LinearLayout
-    implements View.OnClickListener
+        implements View.OnClickListener
 {
 
     public interface ColorSelect
     {
-        void OnColorSelected(@ColorRes int color);
+
+        void OnColorSelected (@ColorRes int color);
     }
 
     private static final String TAG = "PaletteView";
@@ -28,13 +29,13 @@ public class PaletteView extends LinearLayout
 
     private ColorSelect colorSelectListener;
 
-    public PaletteView(Context context, @Nullable AttributeSet attrs)
+    public PaletteView (Context context, @Nullable AttributeSet attrs)
     {
         super(context, attrs);
         initialize();
     }
 
-    private void initialize()
+    private void initialize ()
     {
         LayoutInflater inflater = LayoutInflater.from(getContext());
         final View internalView = inflater.inflate(R.layout.view_palette, this, true);
@@ -57,18 +58,22 @@ public class PaletteView extends LinearLayout
         colorSelected = android.R.color.black;
     }
 
-    public void setColorSelectListener(@NonNull ColorSelect colorSelectListener) {
+    public void setColorSelectListener (@NonNull ColorSelect colorSelectListener)
+    {
         this.colorSelectListener = colorSelectListener;
     }
 
-    public @ColorRes int colorSelected() {
+    public
+    @ColorRes
+    int colorSelected ()
+    {
         return colorSelected;
     }
 
     @Override
-    public void onClick(View view)
+    public void onClick (View view)
     {
-        switch(view.getId())
+        switch (view.getId())
         {
             case R.id.view_palette_white:
                 colorSelected = android.R.color.white;

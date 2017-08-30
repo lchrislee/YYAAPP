@@ -44,13 +44,15 @@ public class PaintActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         getMenuInflater().inflate(R.menu.menu_paint, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         switch(item.getItemId())
         {
             case R.id.menu_paint_save:
@@ -60,8 +62,14 @@ public class PaintActivity extends AppCompatActivity
                     Toast.LENGTH_SHORT
                 ).show();
                 break;
+            case R.id.menu_paint_undo:
+                canvas.undoLast();
+                break;
+            case R.id.menu_paint_redo:
+                canvas.redoLast();
+                break;
             case R.id.menu_paint_clear:
-                canvas.clear();
+                canvas.clearCanvas();
                 break;
         }
         return super.onOptionsItemSelected(item);
