@@ -54,8 +54,7 @@ public class CanvasView extends View
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        internalBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-        internalCanvas = new Canvas(internalBitmap);
+        createCanvas(w, h);
     }
 
     @Override
@@ -96,4 +95,15 @@ public class CanvasView extends View
         brush.setColor(paintColor);
     }
 
+    public void clear()
+    {
+        createCanvas(getWidth(), getHeight());
+    }
+
+    private void createCanvas(int w, int h)
+    {
+        internalBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        internalCanvas = new Canvas(internalBitmap);
+        postInvalidate();
+    }
 }

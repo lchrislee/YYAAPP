@@ -2,7 +2,12 @@ package com.lchrislee.yyaapp.activities;
 
 import android.os.Bundle;
 import android.support.annotation.ColorRes;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.lchrislee.yyaapp.R;
 import com.lchrislee.yyaapp.views.CanvasView;
@@ -27,6 +32,39 @@ public class PaintActivity extends AppCompatActivity
         // Binds as if using findViewById.
         canvas = (CanvasView) findViewById(R.id.activity_paint_canvas);
         palette = (PaletteView) findViewById(R.id.activity_paint_palette);
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        final ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null)
+        {
+            actionBar.setTitle(R.string.toolbar_paint_new);
+            actionBar.setDisplayShowTitleEnabled(true);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_paint, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId())
+        {
+            case R.id.menu_paint_save:
+                Toast.makeText(
+                    getApplicationContext(),
+                    R.string.NOT_IMPLEMENTED,
+                    Toast.LENGTH_SHORT
+                ).show();
+                break;
+            case R.id.menu_paint_clear:
+                canvas.clear();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

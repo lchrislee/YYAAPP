@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">YYAAPP</string>
+    <string name="toolbar_paint_new">New Painting</string>
+    <string name="menu_paint_clear">Clear</string>
+    <string name="menu_paint_save">Save</string>
+
+    <string name="NOT_IMPLEMENTED">Check again in the future for this feature.</string>
 </resources>
