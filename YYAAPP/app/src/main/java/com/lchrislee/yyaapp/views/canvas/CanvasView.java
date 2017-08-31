@@ -3,7 +3,6 @@ package com.lchrislee.yyaapp.views.canvas;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.support.annotation.ColorInt;
-import android.support.annotation.ColorRes;
 import android.support.annotation.Dimension;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -95,7 +94,7 @@ public class CanvasView extends View
     }
 
     public void changeBrush(
-        @ColorRes int newColor,
+        @ColorInt int newColor,
         @Dimension float newSize
     ) {
         changePaintColor(newColor);
@@ -103,11 +102,9 @@ public class CanvasView extends View
     }
 
     public void changePaintColor (
-        @ColorRes int newColor
+        @ColorInt int newColor
     ) {
-        @ColorInt
-        int color = ContextCompat.getColor(getContext(), newColor);
-        internal.changePaintColor(color);
+        internal.changePaintColor(newColor);
     }
 
     public void changeStrokeSize (

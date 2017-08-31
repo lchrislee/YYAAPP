@@ -1,6 +1,6 @@
 package com.lchrislee.yyaapp.presenters;
 
-import android.support.annotation.ColorRes;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 
 import com.lchrislee.yyaapp.views.BrushSizeView;
@@ -34,7 +34,7 @@ public class PaintPresenter
 
     @Override
     public void OnColorSelected(
-        @ColorRes int color
+        @ColorInt int color
     ) {
         canvas.changePaintColor(color);
     }

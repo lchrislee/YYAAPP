@@ -5,4 +5,8 @@
         <attr name="step_multiplier" format="integer" />
         <attr name="step_count" format="integer" />
     </declare-styleable>
+
+    <declare-styleable name="PaletteView">
+        <attr name="colors" format="reference" />
+    </declare-styleable>
 </resources>

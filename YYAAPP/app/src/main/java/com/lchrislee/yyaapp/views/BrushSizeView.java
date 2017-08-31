@@ -1,7 +1,6 @@
 package com.lchrislee.yyaapp.views;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.support.annotation.Dimension;
 import android.support.annotation.Nullable;
@@ -9,12 +8,12 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.widget.FrameLayout;
 import android.widget.SeekBar;
 
 import com.lchrislee.yyaapp.R;
 
-public class BrushSizeView extends LinearLayout implements SeekBar.OnSeekBarChangeListener
+public class BrushSizeView extends FrameLayout implements SeekBar.OnSeekBarChangeListener
 {
 
     public interface StrokeSizeChange
@@ -56,11 +55,8 @@ public class BrushSizeView extends LinearLayout implements SeekBar.OnSeekBarChan
         final SeekBar brushSize = internalView.findViewById(R.id.view_stroke_seek);
         brushSize.setOnSeekBarChangeListener(this);
 
-        final Context context = getContext();
-        final Resources resources = context.getResources();
-
         // 0 designates no default style listed in theme but use the default style.
-        TypedArray viewAttributes = context.getTheme().obtainStyledAttributes(
+        final TypedArray viewAttributes = getContext().getTheme().obtainStyledAttributes(
             attrs,
             R.styleable.BrushSizeView,
             0,
@@ -69,20 +65,22 @@ public class BrushSizeView extends LinearLayout implements SeekBar.OnSeekBarChan
 
         final int stepCount = viewAttributes.getInt(
             R.styleable.BrushSizeView_step_count,
-            resources.getInteger(R.integer.stroke_seek_step_count_default)
+            getResources().getInteger(R.integer.stroke_seek_step_count_default)
         );
         brushSize.setMax(stepCount);
 
         stepMultiplier = viewAttributes.getInt(
             R.styleable.BrushSizeView_step_multiplier,
-            resources.getInteger(R.integer.stroke_seek_step_multiplier_default)
+            getResources().getInteger(R.integer.stroke_seek_step_multiplier_default)
         );
 
         final int stepProgress = viewAttributes.getInt(
             R.styleable.BrushSizeView_step_progress,
-            resources.getInteger(R.integer.stroke_seek_progress_default)
+            getResources().getInteger(R.integer.stroke_seek_progress_default)
         );
         brushSize.setProgress(stepProgress);
+
+        viewAttributes.recycle();
     }
 
     @Override

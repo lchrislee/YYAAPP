@@ -1,13 +1,14 @@
 package com.lchrislee.yyaapp.views;
 
 import android.content.Context;
-import android.support.annotation.ColorRes;
+import android.content.res.TypedArray;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatImageButton;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.lchrislee.yyaapp.R;
@@ -20,14 +21,14 @@ public class PaletteView extends LinearLayout
 
     public interface ColorSelect
     {
-        void OnColorSelected (@ColorRes int color);
+        void OnColorSelected (@ColorInt int color);
     }
 
     private static final String TAG = "PaletteView";
 
     private ArrayList<AppCompatImageButton> buttons;
 
-    @ColorRes
+    @ColorInt
     private int colorSelected;
 
     private ColorSelect colorSelectListener;
@@ -53,26 +54,47 @@ public class PaletteView extends LinearLayout
     private void initialize (
         @Nullable AttributeSet attrs
     ) {
-        final LayoutInflater inflater = LayoutInflater.from(getContext());
-        final View internalView = inflater.inflate(R.layout.view_palette, this, true);
-
         buttons = new ArrayList<>();
 
-        buttons.add((AppCompatImageButton) internalView.findViewById(R.id.view_palette_black));
-        buttons.add((AppCompatImageButton) internalView.findViewById(R.id.view_palette_white));
-        buttons.add((AppCompatImageButton) internalView.findViewById(R.id.view_palette_red));
-        buttons.add((AppCompatImageButton) internalView.findViewById(R.id.view_palette_yellow));
-        buttons.add((AppCompatImageButton) internalView.findViewById(R.id.view_palette_green));
-        buttons.add((AppCompatImageButton) internalView.findViewById(R.id.view_palette_blue));
-        buttons.add((AppCompatImageButton) internalView.findViewById(R.id.view_palette_brown));
+        final TypedArray attributes = getContext().getTheme().obtainStyledAttributes(
+            attrs,
+            R.styleable.PaletteView,
+            0,
+            R.style.PaletteDefaultStyle
+        );
 
-        for (AppCompatImageButton button : buttons)
+        final int colorsId = attributes.getResourceId(
+            R.styleable.PaletteView_colors,
+            R.array.palette_colors_default
+        );
+
+        int size = (int) getResources().getDimension(R.dimen.x5);
+        int margin = (int) getResources().getDimension(R.dimen.x0_5);
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.setMargins(margin, margin, margin, margin);
+        params.width = size;
+        params.height = size;
+
+        final int[] values = getResources().getIntArray(colorsId);
+
+        for (int colorId : values)
         {
-            button.setOnClickListener(this);
+            AppCompatImageButton imageButton = new AppCompatImageButton(getContext());
+            imageButton.setLayoutParams(params);
+            imageButton.setTag(colorId);
+            imageButton.setBackgroundColor(colorId);
+            imageButton.setOnClickListener(this);
+            buttons.add(imageButton);
+            addView(imageButton);
         }
 
-        colorSelected = android.R.color.black;
+        colorSelected = (Integer) buttons.get(0).getTag();
         buttons.get(0).setImageResource(android.R.drawable.ic_menu_view);
+
+        attributes.recycle();
     }
 
     public void setColorSelectListener (@NonNull ColorSelect colorSelectListener)
@@ -81,7 +103,7 @@ public class PaletteView extends LinearLayout
     }
 
     public
-    @ColorRes
+    @ColorInt
     int colorSelected ()
     {
         return colorSelected;
@@ -92,30 +114,7 @@ public class PaletteView extends LinearLayout
     {
         designateCurrentColor((AppCompatImageButton) view);
 
-        switch (view.getId())
-        {
-            case R.id.view_palette_white:
-                colorSelected = android.R.color.white;
-                break;
-            case R.id.view_palette_red:
-                colorSelected = R.color.red;
-                break;
-            case R.id.view_palette_yellow:
-                colorSelected = R.color.yellow;
-                break;
-            case R.id.view_palette_green:
-                colorSelected = R.color.green;
-                break;
-            case R.id.view_palette_blue:
-                colorSelected = R.color.blue;
-                break;
-            case R.id.view_palette_brown:
-                colorSelected = R.color.brown;
-                break;
-            default:
-                colorSelected = R.color.black;
-                break;
-        }
+        colorSelected = (int) view.getTag();
 
         if (colorSelectListener != null)
         {

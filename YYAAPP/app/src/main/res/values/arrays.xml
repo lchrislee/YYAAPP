@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer-array name="palette_colors_default">
+        <item>@color/black</item>
+        <item>@color/white</item>
+    </integer-array>
+
+    <integer-array name="palette_colors">
+        <item>@color/black</item>
+        <item>@color/white</item>
+        <item>@color/red</item>
+        <item>@color/yellow</item>
+        <item>@color/green</item>
+        <item>@color/blue</item>
+        <item>@color/brown</item>
+    </integer-array>
+</resources>

@@ -11,4 +11,8 @@
         <item name="step_count">@integer/stroke_seek_step_count_default</item>
     </style>
 
+    <style name="PaletteDefaultStyle">
+        <item name="colors">@array/palette_colors_default</item>
+    </style>
+
 </resources>
