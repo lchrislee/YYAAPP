@@ -1,10 +1,8 @@
 package com.lchrislee.yyaapp.views;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Path;
+import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
 import android.support.annotation.Dimension;
 import android.support.annotation.Nullable;
@@ -14,10 +12,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.lchrislee.yyaapp.R;
-import com.lchrislee.yyaapp.model.CanvasChange;
-import com.lchrislee.yyaapp.model.CanvasHistory;
-
-import java.util.Iterator;
+import com.lchrislee.yyaapp.controllers.CanvasPresenter;
 
 /*
  * Since I never made a paint program, this part is highly based off of this tutorial:
@@ -29,18 +24,19 @@ public class CanvasView extends View
 
     private static final String TAG = "CanvasView";
 
-    private final Paint canvasBrush = new Paint(Paint.DITHER_FLAG);
+    private CanvasPresenter presenter;
 
-    private Path path;
-    private Paint paint;
+    public CanvasView (Context context)
+    {
+        super(context);
+        initialize();
+    }
 
-    private Canvas internalCanvas;
-    private Bitmap internalBitmap;
-
-    private int paintColor;
-    private float strokeWidth;
-
-    private CanvasHistory history;
+    public CanvasView (Context context, @Nullable AttributeSet attrs, int defStyleAttr)
+    {
+        super(context, attrs, defStyleAttr);
+        initialize();
+    }
 
     public CanvasView (Context context, @Nullable AttributeSet attrs)
     {
@@ -50,24 +46,27 @@ public class CanvasView extends View
 
     private void initialize ()
     {
-        strokeWidth = getContext().getResources().getDimension(R.dimen.stroke_default);
-        generateCurrentBrush();
-        history = new CanvasHistory();
+        @ColorInt
+        final int defaultColor = ContextCompat.getColor(getContext(), R.color.black);
+        @Dimension
+        float defaultSize = getContext().getResources().getDimension(R.dimen.stroke_default);
+        presenter = new CanvasPresenter(defaultColor, defaultSize);
     }
 
     @Override
     protected void onSizeChanged (int w, int h, int oldw, int oldh)
     {
         super.onSizeChanged(w, h, oldw, oldh);
-        createCanvas(w, h);
+        presenter.changeDimensions(w, h);
+        presenter.createEmptyCanvas();
+        postInvalidate();
     }
 
     @Override
     protected void onDraw (Canvas canvas)
     {
         super.onDraw(canvas);
-        canvas.drawBitmap(internalBitmap, 0, 0, canvasBrush);
-        canvas.drawPath(path, paint);
+        presenter.update(canvas);
     }
 
     @Override
@@ -79,17 +78,14 @@ public class CanvasView extends View
         switch (event.getAction())
         {
             case MotionEvent.ACTION_DOWN: // This assumes the user will only ever use one finger.
-                history.clearUndo();
-                path.moveTo(xPos, yPos);
+                presenter.clearUndoHistory();
+                presenter.movePath(xPos, yPos);
                 break;
             case MotionEvent.ACTION_MOVE:
-                path.lineTo(xPos, yPos);
+                presenter.lineTo(xPos, yPos);
                 break;
             case MotionEvent.ACTION_UP:
-                history.addDrawingChange(new CanvasChange(path, paint));
-                internalCanvas.drawPath(path, paint);
-                generateCurrentBrush();
-                paint.setColor(paintColor);
+                presenter.drawCurrentPath();
                 break;
             default:
                 return false;
@@ -100,87 +96,42 @@ public class CanvasView extends View
         return true;
     }
 
-    private void generateCurrentBrush ()
-    {
-        path = new Path();
-        paint = new Paint();
-
-        paint.setAntiAlias(true);
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeJoin(Paint.Join.ROUND);
-        paint.setStrokeCap(Paint.Cap.ROUND);
-        paint.setStrokeWidth(strokeWidth);
+    public void changeBrush(
+        @ColorRes int newColor,
+        @Dimension float newSize
+    ) {
+        changePaintColor(newColor);
+        changeStrokeSize(newSize);
     }
 
     public void changePaintColor (
         @ColorRes int newColor
     ) {
-        paintColor = ContextCompat.getColor(getContext(), newColor);
-        paint.setColor(paintColor);
+        @ColorInt
+        int color = ContextCompat.getColor(getContext(), newColor);
+        presenter.changePaintColor(color);
     }
 
     public void changeStrokeSize (
         @Dimension float size
     ){
-        strokeWidth = size;
-        paint.setStrokeWidth(strokeWidth);
+        presenter.changeStrokeWidth(size);
     }
 
-    public void clearCanvas ()
+    public void clear ()
     {
-        createCanvas(getWidth(), getHeight());
-        history.clearAllHistory();
+        presenter.createEmptyCanvas();
     }
 
-    private void createCanvas (int w, int h)
+    public void undo ()
     {
-        internalBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-        internalCanvas = new Canvas(internalBitmap);
+        presenter.undo();
         postInvalidate();
     }
 
-    public void undoLast ()
+    public void redo ()
     {
-        CanvasChange canvasChange = history.lastAddition();
-        if (canvasChange == null)
-        {
-            return;
-        }
-
-        history.addUndoChange(canvasChange);
-        drawHistory();
-    }
-
-    public void redoLast ()
-    {
-        CanvasChange canvasChange = history.lastUndo();
-        if (canvasChange == null)
-        {
-            return;
-        }
-
-        history.addDrawingChange(canvasChange);
-        drawHistory();
-    }
-
-    private void drawHistory ()
-    {
-        createCanvas(getWidth(), getHeight());
-
-        Iterator<CanvasChange> pathIterator = history.fromBeginning();
-        if (pathIterator == null)
-        {
-            return;
-        }
-
-        CanvasChange currentCanvasChange;
-
-        while (pathIterator.hasNext())
-        {
-            currentCanvasChange = pathIterator.next();
-            internalCanvas.drawPath(currentCanvasChange.path, currentCanvasChange.brush);
-        }
-
+        presenter.redo();
         postInvalidate();
     }
 }

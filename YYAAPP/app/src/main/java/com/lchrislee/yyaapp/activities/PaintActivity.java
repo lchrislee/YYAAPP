@@ -46,6 +46,7 @@ public class PaintActivity extends AppCompatActivity
             actionBar.setTitle(R.string.toolbar_paint_new);
             actionBar.setDisplayShowTitleEnabled(true);
         }
+
     }
 
     @Override
@@ -68,13 +69,13 @@ public class PaintActivity extends AppCompatActivity
                 ).show();
                 break;
             case R.id.menu_paint_undo:
-                canvas.undoLast();
+                canvas.undo();
                 break;
             case R.id.menu_paint_redo:
-                canvas.redoLast();
+                canvas.redo();
                 break;
             case R.id.menu_paint_clear:
-                canvas.clearCanvas();
+                canvas.clear();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -85,8 +86,7 @@ public class PaintActivity extends AppCompatActivity
         super.onResume();
         strokeSize.setStrokeChangeListener(this);
         palette.setColorSelectListener(this);
-        canvas.changePaintColor(palette.colorSelected());
-        canvas.changeStrokeSize(strokeSize.strokeSize());
+        canvas.changeBrush(palette.colorSelected(), strokeSize.strokeSize());
     }
 
     @Override

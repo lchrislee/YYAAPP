@@ -1,6 +1,7 @@
 package com.lchrislee.yyaapp.views;
 
 import android.content.Context;
+import android.support.annotation.Dimension;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -16,7 +17,7 @@ public class StrokeSizeView extends LinearLayout implements SeekBar.OnSeekBarCha
 
     public interface StrokeSizeChange
     {
-        void OnStrokeChanged(float size);
+        void OnStrokeChanged(@Dimension float size);
     }
 
     private static final String TAG = "StrokeSizeView";
