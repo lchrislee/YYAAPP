@@ -12,9 +12,10 @@ import android.widget.Toast;
 import com.lchrislee.yyaapp.R;
 import com.lchrislee.yyaapp.views.CanvasView;
 import com.lchrislee.yyaapp.views.PaletteView;
+import com.lchrislee.yyaapp.views.StrokeSizeView;
 
 public class PaintActivity extends AppCompatActivity
-    implements PaletteView.ColorSelect
+    implements PaletteView.ColorSelect, StrokeSizeView.StrokeSizeChange
 {
 
     private static final String TAG = "PaintActivity";
@@ -22,6 +23,8 @@ public class PaintActivity extends AppCompatActivity
     private CanvasView canvas;
 
     private PaletteView palette;
+
+    private StrokeSizeView strokeSize;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -32,6 +35,8 @@ public class PaintActivity extends AppCompatActivity
         // Binds as if using findViewById.
         canvas = (CanvasView) findViewById(R.id.activity_paint_canvas);
         palette = (PaletteView) findViewById(R.id.activity_paint_palette);
+        strokeSize = (StrokeSizeView) findViewById(R.id.activity_paint_stroke_size);
+
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -78,12 +83,23 @@ public class PaintActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+        strokeSize.setStrokeChangeListener(this);
         palette.setColorSelectListener(this);
         canvas.changePaintColor(palette.colorSelected());
+        canvas.changeStrokeSize(strokeSize.strokeSize());
     }
 
     @Override
-    public void OnColorSelected(@ColorRes int color) {
+    public void OnColorSelected(
+        @ColorRes int color
+    ) {
         canvas.changePaintColor(color);
+    }
+
+    @Override
+    public void OnStrokeChanged (
+        float size
+    ) {
+        canvas.changeStrokeSize(size);
     }
 }

@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.support.annotation.ColorRes;
+import android.support.annotation.Dimension;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
@@ -116,6 +117,13 @@ public class CanvasView extends View
     ) {
         paintColor = ContextCompat.getColor(getContext(), newColor);
         paint.setColor(paintColor);
+    }
+
+    public void changeStrokeSize (
+        @Dimension float size
+    ){
+        strokeWidth = size;
+        paint.setStrokeWidth(strokeWidth);
     }
 
     public void clearCanvas ()

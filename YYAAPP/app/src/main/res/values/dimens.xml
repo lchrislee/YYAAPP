@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- Margin sizes (base is 8dp) -->
     <dimen name="margin_0.5x">4dp</dimen>
     <dimen name="margin_1x">8dp</dimen>
     <dimen name="margin_2x">16dp</dimen>
     <dimen name="margin_3x">24dp</dimen>
     <dimen name="margin_4x">32dp</dimen>
     <dimen name="margin_5x">40dp</dimen>
+
+    <!-- Stroke sizes -->
     <dimen name="stroke_default">16dp</dimen>
+
+    <!-- Stroke seekbar icon sizes -->
+    <dimen name="ic_stroke_small_radius">4dp</dimen>
+    <dimen name="ic_stroke_large_radius">16dp</dimen>
+
 </resources>

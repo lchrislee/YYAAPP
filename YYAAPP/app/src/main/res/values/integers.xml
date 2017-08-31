@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Stroke Seekbar values -->
+    <integer name="stroke_seek_default">3</integer>
+    <integer name="stroke_seek_max">11</integer>
+</resources>

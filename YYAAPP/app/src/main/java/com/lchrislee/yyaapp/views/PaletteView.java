@@ -4,13 +4,15 @@ import android.content.Context;
 import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.AppCompatImageButton;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.lchrislee.yyaapp.R;
+
+import java.util.ArrayList;
 
 public class PaletteView extends LinearLayout
         implements View.OnClickListener
@@ -18,11 +20,12 @@ public class PaletteView extends LinearLayout
 
     public interface ColorSelect
     {
-
         void OnColorSelected (@ColorRes int color);
     }
 
     private static final String TAG = "PaletteView";
+
+    private ArrayList<AppCompatImageButton> buttons;
 
     @ColorRes
     private int colorSelected;
@@ -37,25 +40,26 @@ public class PaletteView extends LinearLayout
 
     private void initialize ()
     {
-        LayoutInflater inflater = LayoutInflater.from(getContext());
+        final LayoutInflater inflater = LayoutInflater.from(getContext());
         final View internalView = inflater.inflate(R.layout.view_palette, this, true);
 
-        final Button black = internalView.findViewById(R.id.view_palette_black);
-        black.setOnClickListener(this);
-        final Button white = internalView.findViewById(R.id.view_palette_white);
-        white.setOnClickListener(this);
-        final Button red = internalView.findViewById(R.id.view_palette_red);
-        red.setOnClickListener(this);
-        final Button yellow = internalView.findViewById(R.id.view_palette_yellow);
-        yellow.setOnClickListener(this);
-        final Button green = internalView.findViewById(R.id.view_palette_green);
-        green.setOnClickListener(this);
-        final Button blue = internalView.findViewById(R.id.view_palette_blue);
-        blue.setOnClickListener(this);
-        final Button brown = internalView.findViewById(R.id.view_palette_brown);
-        brown.setOnClickListener(this);
+        buttons = new ArrayList<>();
+
+        buttons.add((AppCompatImageButton) internalView.findViewById(R.id.view_palette_black));
+        buttons.add((AppCompatImageButton) internalView.findViewById(R.id.view_palette_white));
+        buttons.add((AppCompatImageButton) internalView.findViewById(R.id.view_palette_red));
+        buttons.add((AppCompatImageButton) internalView.findViewById(R.id.view_palette_yellow));
+        buttons.add((AppCompatImageButton) internalView.findViewById(R.id.view_palette_green));
+        buttons.add((AppCompatImageButton) internalView.findViewById(R.id.view_palette_blue));
+        buttons.add((AppCompatImageButton) internalView.findViewById(R.id.view_palette_brown));
+
+        for (AppCompatImageButton button : buttons)
+        {
+            button.setOnClickListener(this);
+        }
 
         colorSelected = android.R.color.black;
+        buttons.get(0).setImageResource(android.R.drawable.ic_menu_view);
     }
 
     public void setColorSelectListener (@NonNull ColorSelect colorSelectListener)
@@ -73,6 +77,8 @@ public class PaletteView extends LinearLayout
     @Override
     public void onClick (View view)
     {
+        designateCurrentColor((AppCompatImageButton) view);
+
         switch (view.getId())
         {
             case R.id.view_palette_white:
@@ -102,6 +108,17 @@ public class PaletteView extends LinearLayout
         {
             colorSelectListener.OnColorSelected(colorSelected);
         }
+    }
+
+    private void designateCurrentColor(
+        @NonNull AppCompatImageButton view
+    ) {
+        for (AppCompatImageButton button : buttons)
+        {
+            button.setImageDrawable(null);
+        }
+
+        view.setImageResource(android.R.drawable.ic_menu_view);
     }
 
 }
