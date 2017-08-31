@@ -39,15 +39,15 @@ public class PaletteView extends LinearLayout
         initialize(null);
     }
 
-    public PaletteView (Context context, @Nullable AttributeSet attrs, int defStyleAttr)
-    {
-        super(context, attrs, defStyleAttr);
-        initialize(attrs);
-    }
-
     public PaletteView (Context context, @Nullable AttributeSet attrs)
     {
         super(context, attrs);
+        initialize(attrs);
+    }
+
+    public PaletteView (Context context, @Nullable AttributeSet attrs, int defStyleAttr)
+    {
+        super(context, attrs, defStyleAttr);
         initialize(attrs);
     }
 
@@ -97,8 +97,9 @@ public class PaletteView extends LinearLayout
         attributes.recycle();
     }
 
-    public void setColorSelectListener (@NonNull ColorSelect colorSelectListener)
-    {
+    public void setColorSelectListener (
+        @NonNull ColorSelect colorSelectListener
+    ) {
         this.colorSelectListener = colorSelectListener;
     }
 

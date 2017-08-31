@@ -53,7 +53,7 @@ public class CanvasHistory
     public void clearAllHistory ()
     {
         drawHistory.clearHistory();
-        undoHistory.clearHistory();
+        clearUndo();
     }
 
     public void clearUndo ()

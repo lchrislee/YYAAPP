@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:tools="http://schemas.android.com/tools"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
               tools:context="com.lchrislee.yyaapp.activities.PaintActivity"
               android:orientation="vertical"
               android:background="@color/paintBackground"
@@ -12,29 +11,9 @@
         layout="@layout/toolbar"
         />
 
-    <com.lchrislee.yyaapp.views.canvas.CanvasView
-        android:id="@+id/activity_paint_canvas"
-        android:background="@android:color/white"
-        android:layout_weight="1"
-        android:layout_margin="@dimen/x2"
+    <FrameLayout
+        android:id="@+id/activity_paint_frame"
         android:layout_width="match_parent"
-        android:layout_height="0dp" />
-
-    <com.lchrislee.yyaapp.views.PaletteView
-        android:id="@+id/activity_paint_palette"
-        app:colors="@array/palette_colors"
-        android:background="@color/paletteBackground"
-        android:gravity="center"
-        android:paddingTop="@dimen/x0.5"
-        android:paddingBottom="@dimen/x0.5"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        />
-
-    <com.lchrislee.yyaapp.views.BrushSizeView
-        android:id="@+id/activity_paint_stroke_size"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        />
+        android:layout_height="match_parent" />
 
 </LinearLayout>

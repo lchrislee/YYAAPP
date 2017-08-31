@@ -11,4 +11,7 @@
     <string name="menu_paint_redo">Redo</string>
 
     <string name="NOT_IMPLEMENTED">Check again in the future for this feature.</string>
+
+    <!-- Placeholder Text (kept for file organization) -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
