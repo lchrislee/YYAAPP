@@ -2,6 +2,7 @@
 <resources>
 
     <!-- Stroke Seekbar values -->
-    <integer name="stroke_seek_default">3</integer>
-    <integer name="stroke_seek_max">11</integer>
+    <integer name="stroke_seek_progress_default">6</integer>
+    <integer name="stroke_seek_step_count_default">13</integer>
+    <integer name="stroke_seek_step_multiplier_default">2</integer>
 </resources>

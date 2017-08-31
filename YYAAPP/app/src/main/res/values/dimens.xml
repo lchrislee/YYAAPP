@@ -2,12 +2,12 @@
 <resources>
 
     <!-- Margin sizes (base is 8dp) -->
-    <dimen name="margin_0.5x">4dp</dimen>
-    <dimen name="margin_1x">8dp</dimen>
-    <dimen name="margin_2x">16dp</dimen>
-    <dimen name="margin_3x">24dp</dimen>
-    <dimen name="margin_4x">32dp</dimen>
-    <dimen name="margin_5x">40dp</dimen>
+    <dimen name="x0.5">4dp</dimen>
+    <dimen name="x1">8dp</dimen>
+    <dimen name="x2">16dp</dimen>
+    <dimen name="x3">24dp</dimen>
+    <dimen name="x4">32dp</dimen>
+    <dimen name="x5">40dp</dimen>
 
     <!-- Stroke sizes -->
     <dimen name="stroke_default">16dp</dimen>

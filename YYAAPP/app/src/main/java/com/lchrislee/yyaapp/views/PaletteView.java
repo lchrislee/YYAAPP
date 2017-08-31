@@ -32,14 +32,27 @@ public class PaletteView extends LinearLayout
 
     private ColorSelect colorSelectListener;
 
+    public PaletteView (Context context)
+    {
+        super(context);
+        initialize(null);
+    }
+
+    public PaletteView (Context context, @Nullable AttributeSet attrs, int defStyleAttr)
+    {
+        super(context, attrs, defStyleAttr);
+        initialize(attrs);
+    }
+
     public PaletteView (Context context, @Nullable AttributeSet attrs)
     {
         super(context, attrs);
-        initialize();
+        initialize(attrs);
     }
 
-    private void initialize ()
-    {
+    private void initialize (
+        @Nullable AttributeSet attrs
+    ) {
         final LayoutInflater inflater = LayoutInflater.from(getContext());
         final View internalView = inflater.inflate(R.layout.view_palette, this, true);
 

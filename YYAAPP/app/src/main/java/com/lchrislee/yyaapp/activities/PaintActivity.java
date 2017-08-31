@@ -10,7 +10,7 @@ import android.widget.Toast;
 
 import com.lchrislee.yyaapp.R;
 import com.lchrislee.yyaapp.presenters.PaintPresenter;
-import com.lchrislee.yyaapp.views.BrushView;
+import com.lchrislee.yyaapp.views.BrushSizeView;
 import com.lchrislee.yyaapp.views.PaletteView;
 import com.lchrislee.yyaapp.views.canvas.CanvasView;
 
@@ -39,7 +39,7 @@ public class PaintActivity extends AppCompatActivity
 
         final CanvasView canvas = (CanvasView) findViewById(R.id.activity_paint_canvas);
         final PaletteView palette = (PaletteView) findViewById(R.id.activity_paint_palette);
-        final BrushView brush = (BrushView) findViewById(R.id.activity_paint_stroke_size);
+        final BrushSizeView brush = (BrushSizeView) findViewById(R.id.activity_paint_stroke_size);
 
         presenter = new PaintPresenter(canvas, palette, brush);
     }

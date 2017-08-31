@@ -8,19 +8,19 @@ import java.util.Iterator;
 public class CanvasHistory
 {
 
-    private final CanvasChangeStack drawingHistory;
+    private final CanvasChangeStack drawHistory;
     private final CanvasChangeStack undoHistory;
 
     public CanvasHistory ()
     {
-        drawingHistory = new CanvasChangeStack();
+        drawHistory = new CanvasChangeStack();
         undoHistory = new CanvasChangeStack();
     }
 
     public void addDrawingChange (
         @NonNull BrushStroke change
     ) {
-        drawingHistory.addChange(change);
+        drawHistory.addChange(change);
     }
 
     public void addUndoChange (
@@ -33,7 +33,7 @@ public class CanvasHistory
     @Nullable
     BrushStroke lastAddition ()
     {
-        return drawingHistory.mostRecentChange();
+        return drawHistory.mostRecentChange();
     }
 
     public
@@ -47,12 +47,12 @@ public class CanvasHistory
     @Nullable
     Iterator<BrushStroke> fromBeginning ()
     {
-        return drawingHistory.fromBeginning();
+        return drawHistory.fromBeginning();
     }
 
     public void clearAllHistory ()
     {
-        drawingHistory.clearHistory();
+        drawHistory.clearHistory();
         undoHistory.clearHistory();
     }
 

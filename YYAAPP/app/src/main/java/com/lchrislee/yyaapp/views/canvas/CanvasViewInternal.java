@@ -34,7 +34,7 @@ class CanvasViewInternal
     private int canvasWidth;
     private int canvasHeight;
 
-    private CanvasHistory history;
+    private final CanvasHistory history;
 
     CanvasViewInternal (
         @ColorInt int defaultColor,
@@ -59,13 +59,10 @@ class CanvasViewInternal
         currentBrushPaint.setColor(currentBrushColor);
     }
 
-    // Returns whether the new canvas would be visible.
-    boolean createEmptyCanvas ()
+    void createEmptyCanvas ()
     {
-        history.clearAllHistory();
         internalBitmap = Bitmap.createBitmap(canvasWidth, canvasHeight, Bitmap.Config.ARGB_8888);
         internalCanvas = new Canvas(internalBitmap);
-        return canvasHeight <= 0 || canvasWidth <= 0;
     }
 
     /*
@@ -102,7 +99,7 @@ class CanvasViewInternal
         @NonNull Canvas canvas
     ) {
         canvas.drawBitmap(internalBitmap, 0, 0, canvasBrush);
-        canvas.drawPath(currentBrushPath, currentBrushPaint);
+        placeOnCanvas();
     }
 
     void movePath (
@@ -123,8 +120,13 @@ class CanvasViewInternal
     void drawCurrentPath ()
     {
         history.addDrawingChange(new BrushStroke(currentBrushPath, currentBrushPaint));
+        placeOnCanvas();
         generateCurrentBrush();
-        currentBrushPaint.setColor(currentBrushColor);
+    }
+
+    private void placeOnCanvas ()
+    {
+        internalCanvas.drawPath(currentBrushPath, currentBrushPaint);
     }
 
     private void drawHistory ()
@@ -172,5 +174,10 @@ class CanvasViewInternal
 
         history.addDrawingChange(brushStroke);
         drawHistory();
+    }
+
+    void clearHistory ()
+    {
+        history.clearAllHistory();
     }
 }

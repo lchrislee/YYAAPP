@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/tool_background"
     android:orientation="horizontal"
-    android:padding="@dimen/margin_1x"
+    android:paddingStart="@dimen/x1"
+    android:paddingEnd="@dimen/x1"
+    android:paddingTop="@dimen/x0.5"
+    android:paddingBottom="@dimen/x0.5"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
@@ -12,19 +16,19 @@
         android:src="@drawable/ic_stroke_small"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
-        android:layout_margin="@dimen/margin_1x"
-        android:layout_width="@dimen/margin_2x"
-        android:layout_height="@dimen/margin_2x" />
+        android:layout_margin="@dimen/x1"
+        android:layout_width="@dimen/x2"
+        android:layout_height="@dimen/x2" />
 
     <SeekBar
         android:id="@+id/view_stroke_seek"
-        android:progress="@integer/stroke_seek_default"
-        android:max="@integer/stroke_seek_max"
+        tools:progress="@integer/stroke_seek_progress_default"
+        tools:max="@integer/stroke_seek_step_count_default"
         android:layout_toEndOf="@+id/view_stroke_left_size"
         android:layout_toStartOf="@+id/view_stroke_right_size"
         android:layout_alignTop="@+id/view_stroke_right_size"
         android:layout_alignBottom="@+id/view_stroke_right_size"
-        android:layout_margin="@dimen/margin_1x"
+        android:layout_margin="@dimen/x1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
@@ -32,8 +36,8 @@
         android:id="@+id/view_stroke_right_size"
         android:src="@drawable/ic_stroke_large"
         android:layout_alignParentEnd="true"
-        android:layout_margin="@dimen/margin_1x"
-        android:layout_width="@dimen/margin_4x"
-        android:layout_height="@dimen/margin_4x" />
+        android:layout_margin="@dimen/x1"
+        android:layout_width="@dimen/x4"
+        android:layout_height="@dimen/x4" />
 
 </RelativeLayout>

@@ -3,22 +3,22 @@ package com.lchrislee.yyaapp.presenters;
 import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 
-import com.lchrislee.yyaapp.views.BrushView;
+import com.lchrislee.yyaapp.views.BrushSizeView;
 import com.lchrislee.yyaapp.views.PaletteView;
 import com.lchrislee.yyaapp.views.canvas.CanvasView;
 
 public class PaintPresenter
-    implements PaletteView.ColorSelect, BrushView.StrokeSizeChange
+    implements PaletteView.ColorSelect, BrushSizeView.StrokeSizeChange
 {
 
-    private PaletteView palette;
-    private CanvasView canvas;
-    private BrushView brush;
+    private final PaletteView palette;
+    private final CanvasView canvas;
+    private final BrushSizeView brush;
 
     public PaintPresenter (
         @NonNull CanvasView canvas,
         @NonNull PaletteView palette,
-        @NonNull BrushView brush
+        @NonNull BrushSizeView brush
     ) {
         this.palette = palette;
         this.canvas = canvas;

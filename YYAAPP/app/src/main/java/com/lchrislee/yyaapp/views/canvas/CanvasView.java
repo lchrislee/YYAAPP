@@ -118,7 +118,9 @@ public class CanvasView extends View
 
     public void clear ()
     {
+        internal.clearHistory();
         internal.createEmptyCanvas();
+        postInvalidate();
     }
 
     public void undo ()
