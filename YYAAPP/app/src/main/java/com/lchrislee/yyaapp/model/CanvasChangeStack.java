@@ -9,7 +9,7 @@ import java.util.Stack;
 class CanvasChangeStack
 {
 
-    private final Stack<CanvasChange> changes;
+    private final Stack<BrushStroke> changes;
 
     CanvasChangeStack ()
     {
@@ -17,13 +17,13 @@ class CanvasChangeStack
     }
 
     void addChange (
-        @NonNull CanvasChange newPath
+        @NonNull BrushStroke newPath
     ) {
         changes.add(newPath);
     }
 
     @Nullable
-    CanvasChange mostRecentChange ()
+    BrushStroke mostRecentChange ()
     {
         if (changes.isEmpty())
         {
@@ -38,7 +38,7 @@ class CanvasChangeStack
     }
 
     @Nullable
-    Iterator<CanvasChange> fromBeginning ()
+    Iterator<BrushStroke> fromBeginning ()
     {
         if (changes.isEmpty())
         {

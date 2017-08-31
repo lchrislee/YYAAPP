@@ -18,34 +18,34 @@ public class CanvasHistory
     }
 
     public void addDrawingChange (
-        @NonNull CanvasChange change
+        @NonNull BrushStroke change
     ) {
         drawingHistory.addChange(change);
     }
 
     public void addUndoChange (
-        @NonNull CanvasChange canvasChange
+        @NonNull BrushStroke brushStroke
     ) {
-        undoHistory.addChange(canvasChange);
+        undoHistory.addChange(brushStroke);
     }
 
     public
     @Nullable
-    CanvasChange lastAddition ()
+    BrushStroke lastAddition ()
     {
         return drawingHistory.mostRecentChange();
     }
 
     public
     @Nullable
-    CanvasChange lastUndo ()
+    BrushStroke lastUndo ()
     {
         return undoHistory.mostRecentChange();
     }
 
     public
     @Nullable
-    Iterator<CanvasChange> fromBeginning ()
+    Iterator<BrushStroke> fromBeginning ()
     {
         return drawingHistory.fromBeginning();
     }

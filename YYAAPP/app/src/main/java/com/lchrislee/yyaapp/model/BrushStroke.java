@@ -4,18 +4,18 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.support.annotation.NonNull;
 
-public class CanvasChange
+public class BrushStroke
 {
 
     public final Path path;
-    public final Paint brush;
+    public final Paint paint;
 
-    public CanvasChange(
+    public BrushStroke (
         @NonNull Path path,
-        @NonNull Paint brush
+        @NonNull Paint paint
     ) {
 
         this.path = path;
-        this.brush = brush;
+        this.paint = paint;
     }
 }

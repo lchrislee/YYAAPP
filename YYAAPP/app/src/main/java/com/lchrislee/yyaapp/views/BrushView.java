@@ -12,7 +12,7 @@ import android.widget.SeekBar;
 
 import com.lchrislee.yyaapp.R;
 
-public class StrokeSizeView extends LinearLayout implements SeekBar.OnSeekBarChangeListener
+public class BrushView extends LinearLayout implements SeekBar.OnSeekBarChangeListener
 {
 
     public interface StrokeSizeChange
@@ -26,7 +26,7 @@ public class StrokeSizeView extends LinearLayout implements SeekBar.OnSeekBarCha
 
     private float size;
 
-    public StrokeSizeView (Context context, @Nullable AttributeSet attrs)
+    public BrushView (Context context, @Nullable AttributeSet attrs)
     {
         super(context, attrs);
         initialize();

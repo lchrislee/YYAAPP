@@ -1,7 +1,6 @@
 package com.lchrislee.yyaapp.activities;
 
 import android.os.Bundle;
-import android.support.annotation.ColorRes;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -10,32 +9,23 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.lchrislee.yyaapp.R;
-import com.lchrislee.yyaapp.views.CanvasView;
+import com.lchrislee.yyaapp.presenters.PaintPresenter;
+import com.lchrislee.yyaapp.views.BrushView;
 import com.lchrislee.yyaapp.views.PaletteView;
-import com.lchrislee.yyaapp.views.StrokeSizeView;
+import com.lchrislee.yyaapp.views.canvas.CanvasView;
 
 public class PaintActivity extends AppCompatActivity
-    implements PaletteView.ColorSelect, StrokeSizeView.StrokeSizeChange
 {
 
     private static final String TAG = "PaintActivity";
 
-    private CanvasView canvas;
-
-    private PaletteView palette;
-
-    private StrokeSizeView strokeSize;
+    private PaintPresenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_paint);
-
-        // Binds as if using findViewById.
-        canvas = (CanvasView) findViewById(R.id.activity_paint_canvas);
-        palette = (PaletteView) findViewById(R.id.activity_paint_palette);
-        strokeSize = (StrokeSizeView) findViewById(R.id.activity_paint_stroke_size);
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -47,6 +37,11 @@ public class PaintActivity extends AppCompatActivity
             actionBar.setDisplayShowTitleEnabled(true);
         }
 
+        final CanvasView canvas = (CanvasView) findViewById(R.id.activity_paint_canvas);
+        final PaletteView palette = (PaletteView) findViewById(R.id.activity_paint_palette);
+        final BrushView brush = (BrushView) findViewById(R.id.activity_paint_stroke_size);
+
+        presenter = new PaintPresenter(canvas, palette, brush);
     }
 
     @Override
@@ -69,13 +64,13 @@ public class PaintActivity extends AppCompatActivity
                 ).show();
                 break;
             case R.id.menu_paint_undo:
-                canvas.undo();
+                presenter.undoChange();
                 break;
             case R.id.menu_paint_redo:
-                canvas.redo();
+                presenter.redoChange();
                 break;
             case R.id.menu_paint_clear:
-                canvas.clear();
+                presenter.clearCanvas();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -84,22 +79,7 @@ public class PaintActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        strokeSize.setStrokeChangeListener(this);
-        palette.setColorSelectListener(this);
-        canvas.changeBrush(palette.colorSelected(), strokeSize.strokeSize());
+        presenter.refresh();
     }
 
-    @Override
-    public void OnColorSelected(
-        @ColorRes int color
-    ) {
-        canvas.changePaintColor(color);
-    }
-
-    @Override
-    public void OnStrokeChanged (
-        float size
-    ) {
-        canvas.changeStrokeSize(size);
-    }
 }

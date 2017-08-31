@@ -1,4 +1,4 @@
-package com.lchrislee.yyaapp.views;
+package com.lchrislee.yyaapp.views.canvas;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -12,10 +12,9 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.lchrislee.yyaapp.R;
-import com.lchrislee.yyaapp.controllers.CanvasPresenter;
 
 /*
- * Since I never made a paint program, this part is highly based off of this tutorial:
+ * Since I never made a paint program, coordinating brush events is based off of this tutorial:
  * https://code.tutsplus.com/tutorials/android-sdk-create-a-drawing-app-touch-interaction--mobile-19202
  */
 
@@ -24,7 +23,7 @@ public class CanvasView extends View
 
     private static final String TAG = "CanvasView";
 
-    private CanvasPresenter presenter;
+    private CanvasViewInternal internal;
 
     public CanvasView (Context context)
     {
@@ -50,15 +49,16 @@ public class CanvasView extends View
         final int defaultColor = ContextCompat.getColor(getContext(), R.color.black);
         @Dimension
         float defaultSize = getContext().getResources().getDimension(R.dimen.stroke_default);
-        presenter = new CanvasPresenter(defaultColor, defaultSize);
+        internal = new CanvasViewInternal(defaultColor, defaultSize);
     }
 
     @Override
     protected void onSizeChanged (int w, int h, int oldw, int oldh)
     {
         super.onSizeChanged(w, h, oldw, oldh);
-        presenter.changeDimensions(w, h);
-        presenter.createEmptyCanvas();
+        internal.changeDimensions(w, h);
+        internal.createEmptyCanvas();
+        // Redraws view on next iteration of main loop instead of immediately.
         postInvalidate();
     }
 
@@ -66,7 +66,7 @@ public class CanvasView extends View
     protected void onDraw (Canvas canvas)
     {
         super.onDraw(canvas);
-        presenter.update(canvas);
+        internal.update(canvas);
     }
 
     @Override
@@ -78,20 +78,18 @@ public class CanvasView extends View
         switch (event.getAction())
         {
             case MotionEvent.ACTION_DOWN: // This assumes the user will only ever use one finger.
-                presenter.clearUndoHistory();
-                presenter.movePath(xPos, yPos);
+                internal.movePath(xPos, yPos);
                 break;
             case MotionEvent.ACTION_MOVE:
-                presenter.lineTo(xPos, yPos);
+                internal.lineTo(xPos, yPos);
                 break;
             case MotionEvent.ACTION_UP:
-                presenter.drawCurrentPath();
+                internal.drawCurrentPath();
                 break;
             default:
                 return false;
         }
 
-        // Redraws view on next iteration of main loop instead of immediately.
         postInvalidate();
         return true;
     }
@@ -109,29 +107,29 @@ public class CanvasView extends View
     ) {
         @ColorInt
         int color = ContextCompat.getColor(getContext(), newColor);
-        presenter.changePaintColor(color);
+        internal.changePaintColor(color);
     }
 
     public void changeStrokeSize (
         @Dimension float size
     ){
-        presenter.changeStrokeWidth(size);
+        internal.changeStrokeWidth(size);
     }
 
     public void clear ()
     {
-        presenter.createEmptyCanvas();
+        internal.createEmptyCanvas();
     }
 
     public void undo ()
     {
-        presenter.undo();
+        internal.undo();
         postInvalidate();
     }
 
     public void redo ()
     {
-        presenter.redo();
+        internal.redo();
         postInvalidate();
     }
 }
