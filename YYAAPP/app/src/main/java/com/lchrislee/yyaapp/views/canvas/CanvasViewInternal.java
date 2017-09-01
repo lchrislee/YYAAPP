@@ -71,7 +71,7 @@ class CanvasViewInternal
     {
         if (isLoaded)
         {
-            setupCanvas(loadedBitmap.copy(Bitmap.Config.ARGB_8888, true));
+            setupCanvas(Bitmap.createScaledBitmap(loadedBitmap, canvasWidth, canvasHeight, false));
         }
         else
         {
@@ -119,19 +119,18 @@ class CanvasViewInternal
         return this.internalBitmap;
     }
 
-    boolean useImage (
+    void useImage (
         @Nullable Bitmap image
     ) {
         if (image == null)
         {
-            return false;
+            return;
         }
 
         clearHistory();
         loadedBitmap = image;
         isLoaded = true;
         createBaseCanvas();
-        return true;
     }
 
     /*

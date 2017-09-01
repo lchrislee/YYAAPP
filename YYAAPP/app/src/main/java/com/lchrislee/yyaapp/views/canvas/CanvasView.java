@@ -11,7 +11,6 @@ import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
 
 import com.lchrislee.yyaapp.R;
 
@@ -150,15 +149,7 @@ public class CanvasView extends View
     public void useImage (
         @Nullable Bitmap image
     ) {
-        if (!internal.useImage(image))
-        {
-            Toast.makeText(
-                getContext(),
-                R.string.view_canvas_load_failure,
-                Toast.LENGTH_SHORT
-            ).show();
-            return;
-        }
+        internal.useImage(image);
         postInvalidate();
     }
 }

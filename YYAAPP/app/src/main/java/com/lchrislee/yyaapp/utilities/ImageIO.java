@@ -3,6 +3,7 @@ package com.lchrislee.yyaapp.utilities;
 import android.content.ContentResolver;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -76,8 +77,9 @@ public class ImageIO
 
     private static
     @Nullable
-    File albumDirectory (@NonNull String appName)
-    {
+    File albumDirectory (
+        @NonNull String appName
+    ) {
         File albumDirectory = new File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
             appName
@@ -102,14 +104,31 @@ public class ImageIO
         @NonNull ContentResolver resolver,
         @NonNull Uri data
     ) {
-        Bitmap output = null;
+        Bitmap output;
         try
         {
             output = BitmapFactory.decodeStream(resolver.openInputStream(data));
         } catch (FileNotFoundException e)
         {
             Log.e(TAG, "Could not open image from Uri.");
+            return null;
         }
+
+        if (output.getWidth() > output.getHeight())
+        {
+            Matrix rotate = new Matrix();
+            rotate.postRotate(90);
+            output = Bitmap.createBitmap(
+                output,
+                0,
+                0,
+                output.getWidth(),
+                output.getHeight(),
+                rotate,
+                true
+            );
+        }
+
         return output;
     }
 }

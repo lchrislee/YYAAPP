@@ -3,6 +3,7 @@ package com.lchrislee.yyaapp.fragments;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -151,10 +152,18 @@ public class PaintFragment extends Fragment implements
                         return;
                     }
 
-                    presenter.openImage(ImageIO.load(
-                        getContext().getContentResolver(),
-                        data.getData())
-                    );
+                    Bitmap image = ImageIO.load(getContext().getContentResolver(), data.getData());
+                    if (image == null)
+                    {
+                        Toast.makeText(
+                            getContext(),
+                            R.string.view_canvas_load_failure,
+                            Toast.LENGTH_SHORT
+                        ).show();
+                        break;
+                    }
+
+                    presenter.openImage(image);
                 }
                 break;
             default:
