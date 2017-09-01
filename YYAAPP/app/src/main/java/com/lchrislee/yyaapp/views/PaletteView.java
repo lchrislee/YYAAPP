@@ -103,13 +103,6 @@ public class PaletteView extends LinearLayout
         this.colorSelectListener = colorSelectListener;
     }
 
-    public
-    @ColorInt
-    int colorSelected ()
-    {
-        return colorSelected;
-    }
-
     @Override
     public void onClick (View view)
     {

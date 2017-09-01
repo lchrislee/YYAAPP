@@ -26,7 +26,6 @@ public class BrushSizeView extends FrameLayout implements SeekBar.OnSeekBarChang
 
     private StrokeSizeChange strokeChangeListener;
 
-    private float size;
     private int stepMultiplier;
 
     public BrushSizeView (Context context)
@@ -87,7 +86,7 @@ public class BrushSizeView extends FrameLayout implements SeekBar.OnSeekBarChang
     @Override
     public void onProgressChanged (SeekBar seekBar, int progress, boolean fromUser)
     {
-        size = TypedValue.applyDimension(
+        float size = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
             (progress * stepMultiplier) + stepMultiplier,
             getResources().getDisplayMetrics()
@@ -111,8 +110,4 @@ public class BrushSizeView extends FrameLayout implements SeekBar.OnSeekBarChang
         this.strokeChangeListener = strokeChangeListener;
     }
 
-    public float strokeSize ()
-    {
-        return size;
-    }
 }

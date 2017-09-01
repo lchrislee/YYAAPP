@@ -3,7 +3,7 @@
               xmlns:tools="http://schemas.android.com/tools"
               tools:context="com.lchrislee.yyaapp.activities.PaintActivity"
               android:orientation="vertical"
-              android:background="@color/paintBackground"
+              android:background="@color/colorPrimaryLight"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 

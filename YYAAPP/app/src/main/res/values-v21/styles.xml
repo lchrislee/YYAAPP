@@ -1,4 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -6,17 +8,8 @@
         <item name="android:background">#00000000</item>
         <item name="android:colorBackground">@color/colorBackground</item>
         <item name="android:windowBackground">@color/windowBackground</item>
+        <item name="android:navigationBarColor">@color/colorPrimaryDark</item>
         <item name="android:textColorPrimary">@color/black</item>
+        <item name="android:statusBarColor">?android:attr/colorPrimary</item>
     </style>
-
-    <style name="BrushViewDefaultStyle">
-        <item name="step_progress">@integer/seek_brush_progress_default</item>
-        <item name="step_multiplier">@integer/seek_brush_step_multiplier_default</item>
-        <item name="step_count">@integer/seek_brush_step_count_default</item>
-    </style>
-
-    <style name="PaletteDefaultStyle">
-        <item name="colors">@array/palette_colors_default</item>
-    </style>
-
 </resources>

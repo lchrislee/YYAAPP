@@ -18,7 +18,7 @@
     <com.lchrislee.yyaapp.views.PaletteView
         android:id="@+id/fragment_paint_palette"
         app:colors="@array/palette_colors"
-        android:background="@color/paletteBackground"
+        android:background="@color/colorPrimaryDark"
         android:gravity="center"
         android:paddingTop="@dimen/x0.5"
         android:paddingBottom="@dimen/x0.5"
