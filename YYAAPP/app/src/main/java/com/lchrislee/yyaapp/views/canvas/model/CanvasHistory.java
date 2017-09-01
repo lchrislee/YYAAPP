@@ -4,60 +4,74 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.util.Iterator;
+import java.util.Stack;
 
 public class CanvasHistory
 {
 
-    private final CanvasChangeStack drawHistory;
-    private final CanvasChangeStack undoHistory;
+    private final Stack<BrushStroke> drawHistory;
+    private final Stack<BrushStroke> undoHistory;
 
     public CanvasHistory ()
     {
-        drawHistory = new CanvasChangeStack();
-        undoHistory = new CanvasChangeStack();
+        drawHistory = new Stack<>();
+        undoHistory = new Stack<>();
     }
 
-    public void addDrawingChange (
+    public void addStroke (
         @NonNull BrushStroke change
     ) {
-        drawHistory.addChange(change);
+        drawHistory.push(change);
     }
 
-    public void addUndoChange (
+    public void addUndo (
         @NonNull BrushStroke brushStroke
     ) {
-        undoHistory.addChange(brushStroke);
+        undoHistory.push(brushStroke);
     }
 
     public
     @Nullable
-    BrushStroke lastAddition ()
+    BrushStroke previousStroke ()
     {
-        return drawHistory.mostRecentChange();
+        if (drawHistory.isEmpty())
+        {
+            return null;
+        }
+        return drawHistory.pop();
     }
 
     public
     @Nullable
-    BrushStroke lastUndo ()
+    BrushStroke previousUndo ()
     {
-        return undoHistory.mostRecentChange();
+        if (undoHistory.isEmpty())
+        {
+            return null;
+        }
+
+        return undoHistory.pop();
     }
 
     public
     @Nullable
     Iterator<BrushStroke> fromBeginning ()
     {
-        return drawHistory.fromBeginning();
+        if (drawHistory.isEmpty())
+        {
+            return null;
+        }
+        return drawHistory.iterator();
     }
 
-    public void clearAllHistory ()
+    public void clearAll ()
     {
-        drawHistory.clearHistory();
-        clearUndo();
+        drawHistory.clear();
+        undoHistory.clear();
     }
 
     public void clearUndo ()
     {
-        undoHistory.clearHistory();
+        undoHistory.clear();
     }
 }

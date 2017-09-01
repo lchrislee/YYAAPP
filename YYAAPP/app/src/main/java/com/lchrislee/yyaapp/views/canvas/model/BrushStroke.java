@@ -4,6 +4,9 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.support.annotation.NonNull;
 
+/*
+ * Treat this like a C++ struct. Just a carrier for data.
+ */
 public class BrushStroke
 {
 
@@ -18,4 +21,5 @@ public class BrushStroke
         this.path = path;
         this.paint = paint;
     }
+
 }

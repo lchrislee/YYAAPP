@@ -17,15 +17,16 @@ import com.lchrislee.yyaapp.R;
 public class BrushSizeView extends FrameLayout implements SeekBar.OnSeekBarChangeListener
 {
 
-    public interface StrokeSizeChange
+    public interface SizeChangeCallback
     {
-        void OnStrokeChanged(@Dimension float size);
+        void onSizeChanged (@Dimension float size);
     }
 
     private static final String TAG = "StrokeSizeView";
 
-    private StrokeSizeChange strokeChangeListener;
+    private SizeChangeCallback callbackListener;
 
+    private float size;
     private int stepMultiplier;
 
     public BrushSizeView (Context context)
@@ -55,7 +56,7 @@ public class BrushSizeView extends FrameLayout implements SeekBar.OnSeekBarChang
         final SeekBar brushSize = internalView.findViewById(R.id.view_stroke_seek);
         brushSize.setOnSeekBarChangeListener(this);
 
-        // 0 designates no default style listed in theme but use the default style.
+        // 0 designates no default style listed in theme but useImage the default style.
         final TypedArray viewAttributes = getContext().getTheme().obtainStyledAttributes(
             attrs,
             R.styleable.BrushSizeView,
@@ -83,18 +84,25 @@ public class BrushSizeView extends FrameLayout implements SeekBar.OnSeekBarChang
         viewAttributes.recycle();
     }
 
+    public
+    @Dimension
+    float size ()
+    {
+        return size;
+    }
+
     @Override
     public void onProgressChanged (SeekBar seekBar, int progress, boolean fromUser)
     {
-        float size = TypedValue.applyDimension(
+        size = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
             (progress * stepMultiplier) + stepMultiplier,
             getResources().getDisplayMetrics()
         );
 
-        if (strokeChangeListener != null)
+        if (callbackListener != null)
         {
-            strokeChangeListener.OnStrokeChanged(size);
+            callbackListener.onSizeChanged(size);
         }
     }
 
@@ -104,10 +112,10 @@ public class BrushSizeView extends FrameLayout implements SeekBar.OnSeekBarChang
     @Override
     public void onStopTrackingTouch (SeekBar seekBar) {}
 
-    public void setStrokeChangeListener (
-        @NonNull StrokeSizeChange strokeChangeListener
+    public void setCallbackListener (
+        @NonNull SizeChangeCallback callbackListener
     ) {
-        this.strokeChangeListener = strokeChangeListener;
+        this.callbackListener = callbackListener;
     }
 
 }

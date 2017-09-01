@@ -13,43 +13,71 @@ import com.lchrislee.yyaapp.views.PaletteView;
 import com.lchrislee.yyaapp.views.canvas.CanvasView;
 
 public class PaintPresenter implements
-    PaletteView.ColorSelect, BrushSizeView.StrokeSizeChange, SaveDialog.SaveDetailsFinalized
+    PaletteView.ColorSelectCallback, BrushSizeView.SizeChangeCallback, SaveDialog.ValidSaveCallback
 {
 
-    public interface SaveFinished
+    public interface SaveFinishedCallback
     {
-        void OnSaveFinished(boolean isSuccessful);
+        void onSaveFinished (boolean isSuccessful);
     }
 
     private static final String TAG = "PaintPresenter";
 
     private final CanvasView canvas;
 
-    private SaveFinished saveFinishedListener;
+    private SaveFinishedCallback callbackListener;
 
     public PaintPresenter (
         @NonNull CanvasView canvas,
         @NonNull PaletteView palette,
         @NonNull BrushSizeView brush
     ) {
+        brush.setCallbackListener(this);
+        palette.setCallbackListener(this);
         this.canvas = canvas;
-        brush.setStrokeChangeListener(this);
-        palette.setColorSelectListener(this);
+        this.canvas.changeStrokeSize(brush.size());
+        this.canvas.changePaintColor(palette.color());
     }
 
+    public void setCallbackListener (
+        @NonNull SaveFinishedCallback callbackListener
+    ) {
+        this.callbackListener = callbackListener;
+    }
+
+    /*
+     * Interfaces
+     */
+
     @Override
-    public void OnColorSelected(
+    public void onColorSelected (
         @ColorInt int color
     ) {
         canvas.changePaintColor(color);
     }
 
     @Override
-    public void OnStrokeChanged (
+    public void onSizeChanged (
         float size
     ) {
         canvas.changeStrokeSize(size);
     }
+
+    @Override
+    public void onSave (
+        @NonNull String appName,
+        @NonNull String imageName
+    ) {
+        boolean isSuccessful = ImageIO.save(appName, imageName, canvas.drawing());
+        if (callbackListener != null)
+        {
+            callbackListener.onSaveFinished(isSuccessful);
+        }
+    }
+
+    /*
+     * Menu options
+     */
 
     public void undoChange ()
     {
@@ -71,33 +99,13 @@ public class PaintPresenter implements
     DialogFragment saveDialog ()
     {
         SaveDialog fragment = SaveDialog.newInstance();
-        fragment.setSaveListener(this);
+        fragment.setCallbackListener(this);
         return fragment;
     }
 
-    @Override
-    public void OnSave (
-        @NonNull String fileName
-    ) {
-        if(ImageIO.save(fileName, canvas.drawing()))
-        {
-            saveFinishedListener.OnSaveFinished(true);
-        }
-        else if (saveFinishedListener != null)
-        {
-            saveFinishedListener.OnSaveFinished(false);
-        }
-    }
-
-    public void setSaveFinishedListener (
-        @NonNull SaveFinished saveFinishedListener
-    ) {
-        this.saveFinishedListener = saveFinishedListener;
-    }
-
-    public void loadImage(
+    public void openImage (
         @Nullable Bitmap image
     ) {
-        this.canvas.useImageAsBase(image);
+        this.canvas.useImage(image);
     }
 }

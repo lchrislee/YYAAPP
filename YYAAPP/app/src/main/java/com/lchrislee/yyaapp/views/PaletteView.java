@@ -19,9 +19,9 @@ public class PaletteView extends LinearLayout
         implements View.OnClickListener
 {
 
-    public interface ColorSelect
+    public interface ColorSelectCallback
     {
-        void OnColorSelected (@ColorInt int color);
+        void onColorSelected (@ColorInt int color);
     }
 
     private static final String TAG = "PaletteView";
@@ -29,9 +29,9 @@ public class PaletteView extends LinearLayout
     private ArrayList<AppCompatImageButton> buttons;
 
     @ColorInt
-    private int colorSelected;
+    private int color;
 
-    private ColorSelect colorSelectListener;
+    private ColorSelectCallback callbackListener;
 
     public PaletteView (Context context)
     {
@@ -91,16 +91,23 @@ public class PaletteView extends LinearLayout
             addView(imageButton);
         }
 
-        colorSelected = (Integer) buttons.get(0).getTag();
+        color = (Integer) buttons.get(0).getTag();
         buttons.get(0).setImageResource(android.R.drawable.ic_menu_view);
 
         attributes.recycle();
     }
 
-    public void setColorSelectListener (
-        @NonNull ColorSelect colorSelectListener
+    public
+    @ColorInt
+    int color ()
+    {
+        return color;
+    }
+
+    public void setCallbackListener (
+        @NonNull ColorSelectCallback callbackListener
     ) {
-        this.colorSelectListener = colorSelectListener;
+        this.callbackListener = callbackListener;
     }
 
     @Override
@@ -108,11 +115,11 @@ public class PaletteView extends LinearLayout
     {
         designateCurrentColor((AppCompatImageButton) view);
 
-        colorSelected = (int) view.getTag();
+        color = (int) view.getTag();
 
-        if (colorSelectListener != null)
+        if (callbackListener != null)
         {
-            colorSelectListener.OnColorSelected(colorSelected);
+            callbackListener.onColorSelected(color);
         }
     }
 

@@ -16,13 +16,17 @@ import java.io.IOException;
 
 public class ImageIO
 {
-    private static final String ALBUM_NAME = "YYAAPP";
     private static final String TAG = "ImageIO";
     private static final String IMAGE_TYPE = ".png";
     public static final int REQUEST_EXTERNAL = 100;
 
+    /*
+     * Saving
+     */
+
     public static boolean save (
-        @NonNull String fileName,
+        @NonNull String appName,
+        @NonNull String imageName,
         @NonNull Bitmap image
     ) {
         if (checkExternalNotWritable())
@@ -30,19 +34,19 @@ public class ImageIO
             return false;
         }
 
-        File directory = getAlbumDirectory();
+        File directory = albumDirectory(appName);
         if (directory == null)
         {
             return false;
         }
 
-        StringBuilder fullName = new StringBuilder()
+        StringBuilder fileName = new StringBuilder()
             .append(directory.getPath())
             .append(File.separator)
-            .append(fileName)
+            .append(imageName)
             .append(IMAGE_TYPE);
 
-        File imageFile = new File(fullName.toString());
+        File imageFile = new File(fileName.toString());
 
         FileOutputStream outputStream;
         try
@@ -72,11 +76,11 @@ public class ImageIO
 
     private static
     @Nullable
-    File getAlbumDirectory ()
+    File albumDirectory (@NonNull String appName)
     {
         File albumDirectory = new File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-            ALBUM_NAME
+            appName
         );
 
         if (!albumDirectory.exists())
@@ -89,6 +93,10 @@ public class ImageIO
 
         return albumDirectory;
     }
+
+    /*
+     * Opening
+     */
 
     public static @Nullable Bitmap load (
         @NonNull ContentResolver resolver,

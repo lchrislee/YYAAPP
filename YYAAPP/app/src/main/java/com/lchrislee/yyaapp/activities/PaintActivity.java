@@ -31,13 +31,12 @@ public class PaintActivity extends AppCompatActivity
             actionBar.setDisplayShowTitleEnabled(true);
         }
 
-        paintFragment = new PaintFragment();
+        paintFragment = PaintFragment.newInstance();
 
         getSupportFragmentManager()
             .beginTransaction()
             .replace(R.id.activity_paint_frame, paintFragment)
-            .commit();
-
+        .commit();
     }
 
 }

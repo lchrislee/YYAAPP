@@ -28,7 +28,7 @@ import com.lchrislee.yyaapp.views.canvas.CanvasView;
 import static android.app.Activity.RESULT_OK;
 
 public class PaintFragment extends Fragment implements
-    PaintPresenter.SaveFinished
+    PaintPresenter.SaveFinishedCallback
 {
 
     private static final String TAG = "PaintFragment";
@@ -39,6 +39,16 @@ public class PaintFragment extends Fragment implements
     public PaintFragment ()
     {
         // Required empty public constructor
+    }
+
+    public static
+    @NonNull
+    PaintFragment newInstance()
+    {
+        PaintFragment fragment = new PaintFragment();
+        Bundle arguments = new Bundle();
+        fragment.setArguments(arguments);
+        return fragment;
     }
 
     @Override
@@ -53,7 +63,7 @@ public class PaintFragment extends Fragment implements
         final BrushSizeView brush = holder.findViewById(R.id.fragment_paint_stroke_size);
 
         presenter = new PaintPresenter(canvas, palette, brush);
-        presenter.setSaveFinishedListener(this);
+        presenter.setCallbackListener(this);
 
         setHasOptionsMenu(true);
 
@@ -94,6 +104,34 @@ public class PaintFragment extends Fragment implements
         return super.onOptionsItemSelected(item);
     }
 
+    /*
+     * Opening
+     */
+
+    /*
+     * This method is all new to me, I have not requested images from a content provider before.
+     * This code is based off of:
+     * https://stackoverflow.com/questions/5309190/android-pick-images-from-gallery
+     */
+    private void requestImages ()
+    {
+        Intent documentIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        documentIntent.setType("image/*");
+
+        Intent imageIntent = new Intent(
+            Intent.ACTION_PICK,
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        );
+        imageIntent.setType("image/*");
+
+        String displayPrompt = getString(R.string.fragment_paint_open_prompt);
+
+        Intent chooserIntent = Intent.createChooser(documentIntent, displayPrompt);
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{imageIntent});
+
+        startActivityForResult(chooserIntent, REQUEST_IMAGE);
+    }
+
     @Override
     public void onActivityResult (int requestCode, int resultCode, Intent data)
     {
@@ -113,7 +151,7 @@ public class PaintFragment extends Fragment implements
                         return;
                     }
 
-                    presenter.loadImage(ImageIO.load(
+                    presenter.openImage(ImageIO.load(
                         getContext().getContentResolver(),
                         data.getData())
                     );
@@ -123,6 +161,10 @@ public class PaintFragment extends Fragment implements
                 break;
         }
     }
+
+    /*
+     * Saving
+     */
 
     @Override
     public void onRequestPermissionsResult (
@@ -152,36 +194,6 @@ public class PaintFragment extends Fragment implements
         }
     }
 
-    /*
-     * This method is all new to me, I have not requested images from a content provider before.
-     * This code is based off of:
-     * https://stackoverflow.com/questions/5309190/android-pick-images-from-gallery
-     */
-    private void requestImages ()
-    {
-        Intent documentIntent = new Intent(Intent.ACTION_GET_CONTENT);
-        documentIntent.setType("image/*");
-
-        Intent imageIntent = new Intent(
-            Intent.ACTION_PICK,
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-        );
-        imageIntent.setType("image/*");
-
-        String displayPrompt = getString(R.string.fragment_paint_open_prompt);
-
-        Intent chooserIntent = Intent.createChooser(documentIntent, displayPrompt);
-        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{imageIntent});
-
-        startActivityForResult(chooserIntent, REQUEST_IMAGE);
-    }
-
-    private void displaySaveDialog()
-    {
-        DialogFragment fragment = presenter.saveDialog();
-        fragment.show(getChildFragmentManager(), "SaveDialog");
-    }
-
     private boolean detectInvalidPermissions ()
     {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
@@ -206,8 +218,14 @@ public class PaintFragment extends Fragment implements
         return true;
     }
 
+    private void displaySaveDialog()
+    {
+        DialogFragment fragment = presenter.saveDialog();
+        fragment.show(getChildFragmentManager(), "SaveDialog");
+    }
+
     @Override
-    public void OnSaveFinished (boolean isSuccessful)
+    public void onSaveFinished (boolean isSuccessful)
     {
         int displayString = isSuccessful
             ? R.string.fragment_paint_save_success

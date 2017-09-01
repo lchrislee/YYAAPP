@@ -54,6 +54,33 @@ public class CanvasView extends View
         internal = new CanvasViewInternal(defaultColor, defaultSize);
     }
 
+    /*
+     * Properties
+     */
+
+    public void changePaintColor (
+        @ColorInt int newColor
+    ) {
+        internal.changePaintColor(newColor);
+    }
+
+    public void changeStrokeSize (
+        @Dimension float size
+    ){
+        internal.changeStrokeWidth(size);
+    }
+
+    public
+    @NonNull
+    Bitmap drawing()
+    {
+        return internal.currentDrawing();
+    }
+
+    /*
+     * View specific
+     */
+
     @Override
     protected void onSizeChanged (int w, int h, int oldw, int oldh)
     {
@@ -71,6 +98,7 @@ public class CanvasView extends View
         internal.update(canvas);
     }
 
+    // This assumes the user will only ever use one finger.
     @Override
     public boolean onTouchEvent (MotionEvent event)
     {
@@ -79,14 +107,14 @@ public class CanvasView extends View
 
         switch (event.getAction())
         {
-            case MotionEvent.ACTION_DOWN: // This assumes the user will only ever use one finger.
-                internal.movePath(xPos, yPos);
+            case MotionEvent.ACTION_DOWN:
+                internal.moveTo(xPos, yPos);
                 break;
             case MotionEvent.ACTION_MOVE:
-                internal.lineTo(xPos, yPos);
+                internal.pathTo(xPos, yPos);
                 break;
             case MotionEvent.ACTION_UP:
-                internal.drawCurrentPath();
+                internal.finishStroke();
                 break;
             default:
                 return false;
@@ -96,17 +124,9 @@ public class CanvasView extends View
         return true;
     }
 
-    public void changePaintColor (
-        @ColorInt int newColor
-    ) {
-        internal.changePaintColor(newColor);
-    }
-
-    public void changeStrokeSize (
-        @Dimension float size
-    ){
-        internal.changeStrokeWidth(size);
-    }
+    /*
+     * Update drawing
+     */
 
     public void clear ()
     {
@@ -127,17 +147,10 @@ public class CanvasView extends View
         postInvalidate();
     }
 
-    public
-    @NonNull
-    Bitmap drawing()
-    {
-        return internal.currentDrawing();
-    }
-
-    public void useImageAsBase(
+    public void useImage (
         @Nullable Bitmap image
     ) {
-        if (!internal.use(image))
+        if (!internal.useImage(image))
         {
             Toast.makeText(
                 getContext(),

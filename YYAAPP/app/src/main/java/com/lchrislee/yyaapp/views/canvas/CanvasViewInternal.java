@@ -24,29 +24,29 @@ class CanvasViewInternal
 {
     private final Paint canvasBrush = new Paint(Paint.DITHER_FLAG);
 
-    private Paint currentBrushPaint;
-    private Path currentBrushPath;
 
     private Canvas internalCanvas;
-    private Bitmap loadedBitmap;
     private Bitmap internalBitmap;
 
-    private float currentBrushWidth;
-    private int currentBrushColor;
+    private Bitmap loadedBitmap;
+    private boolean isLoaded;
 
     private int canvasWidth;
     private int canvasHeight;
-    private boolean isLoadedImage;
 
+    private float brushWidth;
+    private int brushColor;
+
+    private BrushStroke userBrush;
     private final CanvasHistory history;
 
     CanvasViewInternal (
         @ColorInt int defaultColor,
         @Dimension float defaultSize
     ) {
-        this.currentBrushColor = defaultColor;
-        this.currentBrushWidth = defaultSize;
-        this.isLoadedImage = false;
+        this.brushColor = defaultColor;
+        this.brushWidth = defaultSize;
+        this.isLoaded = false;
         this.history = new CanvasHistory();
         this.canvasBrush.setColor(Color.WHITE);
         generateCurrentBrush();
@@ -54,20 +54,22 @@ class CanvasViewInternal
 
     private void generateCurrentBrush ()
     {
-        this.currentBrushPath = new Path();
-        this.currentBrushPaint = new Paint();
+        Path path = new Path();
+        Paint paint = new Paint();
 
-        this.currentBrushPaint.setAntiAlias(true);
-        this.currentBrushPaint.setStyle(Paint.Style.STROKE);
-        this.currentBrushPaint.setStrokeJoin(Paint.Join.ROUND);
-        this.currentBrushPaint.setStrokeCap(Paint.Cap.ROUND);
-        this.currentBrushPaint.setStrokeWidth(currentBrushWidth);
-        this.currentBrushPaint.setColor(currentBrushColor);
+        paint.setAntiAlias(true);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeJoin(Paint.Join.ROUND);
+        paint.setStrokeCap(Paint.Cap.ROUND);
+        paint.setStrokeWidth(brushWidth);
+        paint.setColor(brushColor);
+
+        userBrush = new BrushStroke(path, paint);
     }
 
     void createBaseCanvas ()
     {
-        if (isLoadedImage)
+        if (isLoaded)
         {
             setupCanvas(loadedBitmap.copy(Bitmap.Config.ARGB_8888, true));
         }
@@ -92,15 +94,15 @@ class CanvasViewInternal
     void changePaintColor (
         @ColorInt int paintColor
     ) {
-        currentBrushColor = paintColor;
-        currentBrushPaint.setColor(paintColor);
+        brushColor = paintColor;
+        userBrush.paint.setColor(brushColor);
     }
 
     void changeStrokeWidth (
         @Dimension float strokeWidth
     ) {
-        currentBrushWidth = strokeWidth;
-        currentBrushPaint.setStrokeWidth(strokeWidth);
+        brushWidth = strokeWidth;
+        userBrush.paint.setStrokeWidth(brushWidth);
     }
 
     void changeDimensions (
@@ -117,7 +119,7 @@ class CanvasViewInternal
         return this.internalBitmap;
     }
 
-    boolean use (
+    boolean useImage (
         @Nullable Bitmap image
     ) {
         if (image == null)
@@ -127,13 +129,13 @@ class CanvasViewInternal
 
         clearHistory();
         loadedBitmap = image;
-        isLoadedImage = true;
+        isLoaded = true;
         createBaseCanvas();
         return true;
     }
 
     /*
-     * Drawing Methods
+     * Drawing
      */
 
     void update (
@@ -143,31 +145,37 @@ class CanvasViewInternal
         placeOnCanvas();
     }
 
-    void movePath (
+    void moveTo (
         float xPos,
         float yPos
     ) {
         history.clearUndo();
-        currentBrushPath.moveTo(xPos, yPos);
+        userBrush.path.moveTo(xPos, yPos);
     }
 
-    void lineTo (
+    void pathTo (
         float xPos,
         float yPos
     ) {
-        currentBrushPath.lineTo(xPos, yPos);
+        userBrush.path.lineTo(xPos, yPos);
     }
 
-    void drawCurrentPath ()
+    void finishStroke ()
     {
-        history.addDrawingChange(new BrushStroke(currentBrushPath, currentBrushPaint));
+        history.addStroke(userBrush);
         placeOnCanvas();
         generateCurrentBrush();
     }
 
     private void placeOnCanvas ()
     {
-        internalCanvas.drawPath(currentBrushPath, currentBrushPaint);
+        internalCanvas.drawPath(userBrush.path, userBrush.paint);
+    }
+
+    private void placeOnCanvas (
+        @NonNull BrushStroke stroke
+    ) {
+        internalCanvas.drawPath(stroke.path, stroke.paint);
     }
 
     private void drawHistory ()
@@ -180,47 +188,44 @@ class CanvasViewInternal
             return;
         }
 
-        BrushStroke currentBrushStroke;
-
         while (pathIterator.hasNext())
         {
-            currentBrushStroke = pathIterator.next();
-            internalCanvas.drawPath(currentBrushStroke.path, currentBrushStroke.paint);
+            placeOnCanvas(pathIterator.next());
         }
     }
 
     /*
-     * History Methods
+     * History
      */
 
     void undo()
     {
-        BrushStroke brushStroke = history.lastAddition();
+        BrushStroke brushStroke = history.previousStroke();
         if (brushStroke == null)
         {
             return;
         }
 
-        history.addUndoChange(brushStroke);
+        history.addUndo(brushStroke);
         drawHistory();
     }
 
     void redo()
     {
-        BrushStroke brushStroke = history.lastUndo();
+        BrushStroke brushStroke = history.previousUndo();
         if (brushStroke == null)
         {
             return;
         }
 
-        history.addDrawingChange(brushStroke);
+        history.addStroke(brushStroke);
         drawHistory();
     }
 
     void clearHistory ()
     {
-        history.clearAllHistory();
-        isLoadedImage = false;
+        history.clearAll();
+        isLoaded = false;
         loadedBitmap = null;
     }
 }

@@ -16,16 +16,16 @@ import com.lchrislee.yyaapp.R;
 public class SaveDialog extends DialogFragment
 {
 
-    public interface SaveDetailsFinalized
+    public interface ValidSaveCallback
     {
-        void OnSave(@NonNull String fileName);
+        void onSave (@NonNull String appName, @NonNull String imageName);
     }
 
     private static final String TAG = "SaveDialog";
 
     private EditText name;
 
-    private SaveDetailsFinalized saveListener;
+    private ValidSaveCallback callbackListener;
 
     public static
     @NonNull
@@ -35,6 +35,12 @@ public class SaveDialog extends DialogFragment
         Bundle arguments = new Bundle();
         dialogFragment.setArguments(arguments);
         return dialogFragment;
+    }
+
+    public void setCallbackListener (
+        @NonNull ValidSaveCallback callbackListener
+    ) {
+        this.callbackListener = callbackListener;
     }
 
     @NonNull
@@ -60,9 +66,9 @@ public class SaveDialog extends DialogFragment
                 @Override
                 public void onClick (DialogInterface dialogInterface, int i)
                 {
-                    String fileName = name.getText().toString();
+                    String imageName = name.getText().toString();
 
-                    if (checkInvalid(fileName))
+                    if (checkInvalidName(imageName))
                     {
                         Toast.makeText(
                             getContext(),
@@ -72,9 +78,9 @@ public class SaveDialog extends DialogFragment
                         return;
                     }
 
-                    if (saveListener != null)
+                    if (callbackListener != null)
                     {
-                        saveListener.OnSave(fileName);
+                        callbackListener.onSave(getString(R.string.app_name), imageName);
                         SaveDialog.this.getDialog().dismiss();
                     }
                 }
@@ -94,7 +100,7 @@ public class SaveDialog extends DialogFragment
         return builder.create();
     }
 
-    private boolean checkInvalid (@NonNull String name)
+    private boolean checkInvalidName (@NonNull String name)
     {
         if (name.length() == 0)
         {
@@ -112,8 +118,4 @@ public class SaveDialog extends DialogFragment
         return false;
     }
 
-    public void setSaveListener (@NonNull SaveDetailsFinalized saveListener)
-    {
-        this.saveListener = saveListener;
-    }
 }
