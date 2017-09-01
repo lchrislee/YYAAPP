@@ -27,7 +27,7 @@ public class PaintActivity extends AppCompatActivity
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null)
         {
-            actionBar.setTitle(R.string.toolbar_paint_new);
+            actionBar.setTitle(R.string.app_name);
             actionBar.setDisplayShowTitleEnabled(true);
         }
 

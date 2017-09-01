@@ -2,6 +2,7 @@ package com.lchrislee.yyaapp.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -9,7 +10,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.lchrislee.yyaapp.R;
 import com.lchrislee.yyaapp.presenters.PaintPresenter;
@@ -63,18 +63,15 @@ public class PaintFragment extends Fragment
     {
         switch(item.getItemId())
         {
-            case R.id.menu_paint_save:
-                Toast.makeText(
-                    getContext(),
-                    R.string.NOT_IMPLEMENTED,
-                    Toast.LENGTH_SHORT
-                ).show();
-                break;
             case R.id.menu_paint_undo:
                 presenter.undoChange();
                 break;
             case R.id.menu_paint_redo:
                 presenter.redoChange();
+                break;
+            case R.id.menu_paint_save:
+                DialogFragment fragment = presenter.saveDialog();
+                fragment.show(getChildFragmentManager(), "SaveDialog");
                 break;
             case R.id.menu_paint_clear:
                 presenter.clearCanvas();

@@ -66,18 +66,18 @@ public class BrushSizeView extends FrameLayout implements SeekBar.OnSeekBarChang
 
         final int stepCount = viewAttributes.getInt(
             R.styleable.BrushSizeView_step_count,
-            getResources().getInteger(R.integer.stroke_seek_step_count_default)
+            getResources().getInteger(R.integer.seek_brush_step_count_default)
         );
         brushSize.setMax(stepCount);
 
         stepMultiplier = viewAttributes.getInt(
             R.styleable.BrushSizeView_step_multiplier,
-            getResources().getInteger(R.integer.stroke_seek_step_multiplier_default)
+            getResources().getInteger(R.integer.seek_brush_step_multiplier_default)
         );
 
         final int stepProgress = viewAttributes.getInt(
             R.styleable.BrushSizeView_step_progress,
-            getResources().getInteger(R.integer.stroke_seek_progress_default)
+            getResources().getInteger(R.integer.seek_brush_progress_default)
         );
         brushSize.setProgress(stepProgress);
 

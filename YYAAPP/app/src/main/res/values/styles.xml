@@ -6,9 +6,9 @@
     </style>
 
     <style name="BrushViewDefaultStyle">
-        <item name="step_progress">@integer/stroke_seek_progress_default</item>
-        <item name="step_multiplier">@integer/stroke_seek_step_multiplier_default</item>
-        <item name="step_count">@integer/stroke_seek_step_count_default</item>
+        <item name="step_progress">@integer/seek_brush_progress_default</item>
+        <item name="step_multiplier">@integer/seek_brush_step_multiplier_default</item>
+        <item name="step_count">@integer/seek_brush_step_count_default</item>
     </style>
 
     <style name="PaletteDefaultStyle">

@@ -2,8 +2,11 @@
 <resources>
 
     <!-- Stroke Seekbar values -->
-    <integer name="stroke_seek_progress_default">6</integer>
-    <integer name="stroke_seek_step_count_default">13</integer>
-    <integer name="stroke_seek_step_multiplier_default">2</integer>
+    <integer name="seek_brush_progress_default">6</integer>
+    <integer name="seek_brush_step_count_default">13</integer>
+    <integer name="seek_brush_step_multiplier_default">2</integer>
+
+    <!-- Dialogs -->
+    <integer name="dialog_save_lines_max">1</integer>
 
 </resources>

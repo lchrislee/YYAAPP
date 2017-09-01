@@ -10,6 +10,18 @@
     <string name="menu_paint_undo">Undo</string>
     <string name="menu_paint_redo">Redo</string>
 
+    <!-- Dialogs -->
+    <string name="dialog_save_title">Save drawing</string>
+    <string name="dialog_save_positive">Save</string>
+    <string name="dialog_save_cancel">Cancel</string>
+    <string name="dialog_save_name_hint">What do we name this piece?</string>
+    <string name="dialog_save_invalid_name">
+        Follow naming conventions and try again.
+    </string>
+    <string name="dialog_save_name_restriction">
+        Please only use letters and numbers.
+    </string>
+
     <string name="NOT_IMPLEMENTED">Check again in the future for this feature.</string>
 
     <!-- Placeholder Text (kept for file organization) -->

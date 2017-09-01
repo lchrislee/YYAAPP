@@ -22,8 +22,8 @@
 
     <SeekBar
         android:id="@+id/view_stroke_seek"
-        tools:progress="@integer/stroke_seek_progress_default"
-        tools:max="@integer/stroke_seek_step_count_default"
+        tools:progress="@integer/seek_brush_progress_default"
+        tools:max="@integer/seek_brush_step_count_default"
         android:layout_toEndOf="@+id/view_stroke_left_size"
         android:layout_toStartOf="@+id/view_stroke_right_size"
         android:layout_alignTop="@+id/view_stroke_right_size"

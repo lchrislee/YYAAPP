@@ -1,4 +1,4 @@
-package com.lchrislee.yyaapp.model;
+package com.lchrislee.yyaapp.views.canvas.model;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;

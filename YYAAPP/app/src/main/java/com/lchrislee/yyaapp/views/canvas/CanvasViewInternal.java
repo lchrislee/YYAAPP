@@ -8,8 +8,8 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.Dimension;
 import android.support.annotation.NonNull;
 
-import com.lchrislee.yyaapp.model.BrushStroke;
-import com.lchrislee.yyaapp.model.CanvasHistory;
+import com.lchrislee.yyaapp.views.canvas.model.BrushStroke;
+import com.lchrislee.yyaapp.views.canvas.model.CanvasHistory;
 
 import java.util.Iterator;
 
