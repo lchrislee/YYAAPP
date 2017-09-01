@@ -21,7 +21,14 @@
         android:title="@string/menu_paint_save"
         android:icon="@drawable/ic_save"
         app:showAsAction="ifRoom"
-    />
+        />
+
+    <item
+        android:id="@+id/menu_paint_open"
+        android:title="@string/menu_paint_open"
+        android:icon="@android:drawable/ic_menu_gallery"
+        app:showAsAction="ifRoom"
+        />
 
     <item
         android:id="@+id/menu_paint_clear"

@@ -8,6 +8,7 @@ import android.graphics.Path;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Dimension;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.lchrislee.yyaapp.views.canvas.model.BrushStroke;
 import com.lchrislee.yyaapp.views.canvas.model.CanvasHistory;
@@ -27,6 +28,7 @@ class CanvasViewInternal
     private Path currentBrushPath;
 
     private Canvas internalCanvas;
+    private Bitmap loadedBitmap;
     private Bitmap internalBitmap;
 
     private float currentBrushWidth;
@@ -34,6 +36,7 @@ class CanvasViewInternal
 
     private int canvasWidth;
     private int canvasHeight;
+    private boolean isLoadedImage;
 
     private final CanvasHistory history;
 
@@ -43,29 +46,43 @@ class CanvasViewInternal
     ) {
         this.currentBrushColor = defaultColor;
         this.currentBrushWidth = defaultSize;
-        history = new CanvasHistory();
-        canvasBrush.setColor(Color.WHITE);
+        this.isLoadedImage = false;
+        this.history = new CanvasHistory();
+        this.canvasBrush.setColor(Color.WHITE);
         generateCurrentBrush();
     }
 
     private void generateCurrentBrush ()
     {
-        currentBrushPath = new Path();
-        currentBrushPaint = new Paint();
+        this.currentBrushPath = new Path();
+        this.currentBrushPaint = new Paint();
 
-        currentBrushPaint.setAntiAlias(true);
-        currentBrushPaint.setStyle(Paint.Style.STROKE);
-        currentBrushPaint.setStrokeJoin(Paint.Join.ROUND);
-        currentBrushPaint.setStrokeCap(Paint.Cap.ROUND);
-        currentBrushPaint.setStrokeWidth(currentBrushWidth);
-        currentBrushPaint.setColor(currentBrushColor);
+        this.currentBrushPaint.setAntiAlias(true);
+        this.currentBrushPaint.setStyle(Paint.Style.STROKE);
+        this.currentBrushPaint.setStrokeJoin(Paint.Join.ROUND);
+        this.currentBrushPaint.setStrokeCap(Paint.Cap.ROUND);
+        this.currentBrushPaint.setStrokeWidth(currentBrushWidth);
+        this.currentBrushPaint.setColor(currentBrushColor);
     }
 
-    void createEmptyCanvas ()
+    void createBaseCanvas ()
     {
-        internalBitmap = Bitmap.createBitmap(canvasWidth, canvasHeight, Bitmap.Config.ARGB_8888);
-        internalCanvas = new Canvas(internalBitmap);
-        internalCanvas.drawRect(0,0,canvasWidth, canvasHeight, canvasBrush);
+        if (isLoadedImage)
+        {
+            setupCanvas(loadedBitmap.copy(Bitmap.Config.ARGB_8888, true));
+        }
+        else
+        {
+            setupCanvas(Bitmap.createBitmap(canvasWidth, canvasHeight, Bitmap.Config.ARGB_8888));
+            internalCanvas.drawRect(0,0,canvasWidth, canvasHeight, canvasBrush);
+        }
+    }
+
+    private void setupCanvas (
+        @NonNull Bitmap image
+    ) {
+        internalBitmap = image;
+        internalCanvas = new Canvas(image);
     }
 
     /*
@@ -75,14 +92,14 @@ class CanvasViewInternal
     void changePaintColor (
         @ColorInt int paintColor
     ) {
-        this.currentBrushColor = paintColor;
+        currentBrushColor = paintColor;
         currentBrushPaint.setColor(paintColor);
     }
 
     void changeStrokeWidth (
         @Dimension float strokeWidth
     ) {
-        this.currentBrushWidth = strokeWidth;
+        currentBrushWidth = strokeWidth;
         currentBrushPaint.setStrokeWidth(strokeWidth);
     }
 
@@ -90,14 +107,29 @@ class CanvasViewInternal
         int width,
         int height
     ) {
-        this.canvasWidth = width;
-        this.canvasHeight = height;
+        canvasWidth = width;
+        canvasHeight = height;
     }
 
     @NonNull
     Bitmap currentDrawing()
     {
         return this.internalBitmap;
+    }
+
+    boolean use (
+        @Nullable Bitmap image
+    ) {
+        if (image == null)
+        {
+            return false;
+        }
+
+        clearHistory();
+        loadedBitmap = image;
+        isLoadedImage = true;
+        createBaseCanvas();
+        return true;
     }
 
     /*
@@ -140,7 +172,7 @@ class CanvasViewInternal
 
     private void drawHistory ()
     {
-        createEmptyCanvas();
+        createBaseCanvas();
 
         Iterator<BrushStroke> pathIterator = history.fromBeginning();
         if (pathIterator == null)
@@ -188,5 +220,7 @@ class CanvasViewInternal
     void clearHistory ()
     {
         history.clearAllHistory();
+        isLoadedImage = false;
+        loadedBitmap = null;
     }
 }

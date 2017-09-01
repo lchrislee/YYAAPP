@@ -1,11 +1,13 @@
 package com.lchrislee.yyaapp.presenters;
 
+import android.graphics.Bitmap;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 
 import com.lchrislee.yyaapp.fragments.dialogs.SaveDialog;
-import com.lchrislee.yyaapp.utilities.DataPersistence;
+import com.lchrislee.yyaapp.utilities.ImageIO;
 import com.lchrislee.yyaapp.views.BrushSizeView;
 import com.lchrislee.yyaapp.views.PaletteView;
 import com.lchrislee.yyaapp.views.canvas.CanvasView;
@@ -21,9 +23,7 @@ public class PaintPresenter implements
 
     private static final String TAG = "PaintPresenter";
 
-    private final PaletteView palette;
     private final CanvasView canvas;
-    private final BrushSizeView brush;
 
     private SaveFinished saveFinishedListener;
 
@@ -32,16 +32,9 @@ public class PaintPresenter implements
         @NonNull PaletteView palette,
         @NonNull BrushSizeView brush
     ) {
-        this.palette = palette;
         this.canvas = canvas;
-        this.brush = brush;
         brush.setStrokeChangeListener(this);
         palette.setColorSelectListener(this);
-    }
-
-    public void refresh ()
-    {
-        canvas.changeBrush(palette.colorSelected(), brush.strokeSize());
     }
 
     @Override
@@ -86,7 +79,7 @@ public class PaintPresenter implements
     public void OnSave (
         @NonNull String fileName
     ) {
-        if(DataPersistence.save(fileName, canvas.drawing()))
+        if(ImageIO.save(fileName, canvas.drawing()))
         {
             saveFinishedListener.OnSaveFinished(true);
         }
@@ -100,5 +93,11 @@ public class PaintPresenter implements
         @NonNull SaveFinished saveFinishedListener
     ) {
         this.saveFinishedListener = saveFinishedListener;
+    }
+
+    public void loadImage(
+        @Nullable Bitmap image
+    ) {
+        this.canvas.useImageAsBase(image);
     }
 }

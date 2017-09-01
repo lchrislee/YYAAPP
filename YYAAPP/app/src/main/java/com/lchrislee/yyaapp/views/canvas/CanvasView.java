@@ -11,6 +11,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import com.lchrislee.yyaapp.R;
 
@@ -58,7 +59,7 @@ public class CanvasView extends View
     {
         super.onSizeChanged(w, h, oldw, oldh);
         internal.changeDimensions(w, h);
-        internal.createEmptyCanvas();
+        internal.createBaseCanvas();
         // Redraws view on next iteration of main loop instead of immediately.
         postInvalidate();
     }
@@ -95,14 +96,6 @@ public class CanvasView extends View
         return true;
     }
 
-    public void changeBrush(
-        @ColorInt int newColor,
-        @Dimension float newSize
-    ) {
-        changePaintColor(newColor);
-        changeStrokeSize(newSize);
-    }
-
     public void changePaintColor (
         @ColorInt int newColor
     ) {
@@ -118,7 +111,7 @@ public class CanvasView extends View
     public void clear ()
     {
         internal.clearHistory();
-        internal.createEmptyCanvas();
+        internal.createBaseCanvas();
         postInvalidate();
     }
 
@@ -139,5 +132,20 @@ public class CanvasView extends View
     Bitmap drawing()
     {
         return internal.currentDrawing();
+    }
+
+    public void useImageAsBase(
+        @Nullable Bitmap image
+    ) {
+        if (!internal.use(image))
+        {
+            Toast.makeText(
+                getContext(),
+                R.string.view_canvas_load_failure,
+                Toast.LENGTH_SHORT
+            ).show();
+            return;
+        }
+        postInvalidate();
     }
 }

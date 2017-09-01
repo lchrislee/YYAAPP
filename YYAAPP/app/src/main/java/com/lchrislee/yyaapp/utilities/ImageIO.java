@@ -1,6 +1,9 @@
 package com.lchrislee.yyaapp.utilities;
 
+import android.content.ContentResolver;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,10 +14,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class DataPersistence
+public class ImageIO
 {
     private static final String ALBUM_NAME = "YYAAPP";
-    private static final String TAG = "DataPersistence";
+    private static final String TAG = "ImageIO";
     private static final String IMAGE_TYPE = ".png";
     public static final int REQUEST_EXTERNAL = 100;
 
@@ -67,13 +70,6 @@ public class DataPersistence
         return !Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
     }
 
-    private static boolean isExternalReadable ()
-    {
-        final String state = Environment.getExternalStorageState();
-        return Environment.MEDIA_MOUNTED.equals(state)
-            || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state);
-    }
-
     private static
     @Nullable
     File getAlbumDirectory ()
@@ -92,5 +88,20 @@ public class DataPersistence
         }
 
         return albumDirectory;
+    }
+
+    public static @Nullable Bitmap load (
+        @NonNull ContentResolver resolver,
+        @NonNull Uri data
+    ) {
+        Bitmap output = null;
+        try
+        {
+            output = BitmapFactory.decodeStream(resolver.openInputStream(data));
+        } catch (FileNotFoundException e)
+        {
+            Log.e(TAG, "Could not open image from Uri.");
+        }
+        return output;
     }
 }

@@ -1,9 +1,11 @@
 package com.lchrislee.yyaapp.fragments;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -18,16 +20,19 @@ import android.widget.Toast;
 
 import com.lchrislee.yyaapp.R;
 import com.lchrislee.yyaapp.presenters.PaintPresenter;
-import com.lchrislee.yyaapp.utilities.DataPersistence;
+import com.lchrislee.yyaapp.utilities.ImageIO;
 import com.lchrislee.yyaapp.views.BrushSizeView;
 import com.lchrislee.yyaapp.views.PaletteView;
 import com.lchrislee.yyaapp.views.canvas.CanvasView;
+
+import static android.app.Activity.RESULT_OK;
 
 public class PaintFragment extends Fragment implements
     PaintPresenter.SaveFinished
 {
 
     private static final String TAG = "PaintFragment";
+    private static final int REQUEST_IMAGE = 200;
 
     private PaintPresenter presenter;
 
@@ -80,6 +85,8 @@ public class PaintFragment extends Fragment implements
                 }
                 displaySaveDialog();
                 break;
+            case R.id.menu_paint_open:
+                requestImages();
             case R.id.menu_paint_clear:
                 presenter.clearCanvas();
                 break;
@@ -88,37 +95,91 @@ public class PaintFragment extends Fragment implements
     }
 
     @Override
-    public void onResume ()
+    public void onActivityResult (int requestCode, int resultCode, Intent data)
     {
-        super.onResume();
-        presenter.refresh();
+        super.onActivityResult(requestCode, resultCode, data);
+        switch(requestCode)
+        {
+            case REQUEST_IMAGE:
+                if (resultCode == RESULT_OK)
+                {
+                    if (data == null)
+                    {
+                        Toast.makeText(
+                            getContext(),
+                            R.string.fragment_paint_open_failure,
+                            Toast.LENGTH_SHORT
+                        ).show();
+                        return;
+                    }
+
+                    presenter.loadImage(ImageIO.load(
+                        getContext().getContentResolver(),
+                        data.getData())
+                    );
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult (
+        int requestCode,
+        @NonNull String[] permissions,
+        @NonNull int[] grantResults
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch(requestCode)
+        {
+            case ImageIO.REQUEST_EXTERNAL:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                {
+                    displaySaveDialog();
+                }
+                else
+                {
+                    Toast.makeText(
+                        getContext(),
+                        R.string.dialog_save_permission_failed,
+                        Toast.LENGTH_SHORT
+                    ).show();
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    /*
+     * This method is all new to me, I have not requested images from a content provider before.
+     * This code is based off of:
+     * https://stackoverflow.com/questions/5309190/android-pick-images-from-gallery
+     */
+    private void requestImages ()
+    {
+        Intent documentIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        documentIntent.setType("image/*");
+
+        Intent imageIntent = new Intent(
+            Intent.ACTION_PICK,
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        );
+        imageIntent.setType("image/*");
+
+        String displayPrompt = getString(R.string.fragment_paint_open_prompt);
+
+        Intent chooserIntent = Intent.createChooser(documentIntent, displayPrompt);
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{imageIntent});
+
+        startActivityForResult(chooserIntent, REQUEST_IMAGE);
     }
 
     private void displaySaveDialog()
     {
         DialogFragment fragment = presenter.saveDialog();
         fragment.show(getChildFragmentManager(), "SaveDialog");
-    }
-
-    @Override
-    public void onRequestPermissionsResult (int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
-    {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == DataPersistence.REQUEST_EXTERNAL)
-        {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
-            {
-                displaySaveDialog();
-            }
-            else
-            {
-                Toast.makeText(
-                    getContext(),
-                    R.string.dialog_save_permission_failed,
-                    Toast.LENGTH_SHORT
-                ).show();
-            }
-        }
     }
 
     private boolean detectInvalidPermissions ()
@@ -140,7 +201,7 @@ public class PaintFragment extends Fragment implements
 
         requestPermissions(
             new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-            DataPersistence.REQUEST_EXTERNAL
+            ImageIO.REQUEST_EXTERNAL
         );
         return true;
     }
