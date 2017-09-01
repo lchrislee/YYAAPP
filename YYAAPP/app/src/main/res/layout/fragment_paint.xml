@@ -10,7 +10,6 @@
 
     <com.lchrislee.yyaapp.views.canvas.CanvasView
         android:id="@+id/fragment_paint_canvas"
-        android:background="@android:color/white"
         android:layout_weight="1"
         android:layout_margin="@dimen/x2"
         android:layout_width="match_parent"

@@ -1,9 +1,11 @@
 package com.lchrislee.yyaapp.views.canvas;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Dimension;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
@@ -130,5 +132,12 @@ public class CanvasView extends View
     {
         internal.redo();
         postInvalidate();
+    }
+
+    public
+    @NonNull
+    Bitmap drawing()
+    {
+        return internal.currentDrawing();
     }
 }

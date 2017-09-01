@@ -21,9 +21,13 @@
     <string name="dialog_save_name_restriction">
         Please only use letters and numbers.
     </string>
+    <string name="dialog_save_permission_failed">Grant permissions to save</string>
 
-    <string name="NOT_IMPLEMENTED">Check again in the future for this feature.</string>
+    <!-- Fragments -->
+    <string name="fragment_paint_save_success">Image saved!</string>
+    <string name="fragment_paint_save_failure">Could not save image, is your storage full?</string>
 
     <!-- Placeholder Text (kept for file organization) -->
+    <string name="NOT_IMPLEMENTED">Check again in the future for this feature.</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

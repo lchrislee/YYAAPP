@@ -21,6 +21,8 @@ public class SaveDialog extends DialogFragment
         void OnSave(@NonNull String fileName);
     }
 
+    private static final String TAG = "SaveDialog";
+
     private EditText name;
 
     private SaveDetailsFinalized saveListener;
@@ -60,7 +62,7 @@ public class SaveDialog extends DialogFragment
                 {
                     String fileName = name.getText().toString();
 
-                    if (!validate(fileName))
+                    if (checkInvalid(fileName))
                     {
                         Toast.makeText(
                             getContext(),
@@ -92,22 +94,22 @@ public class SaveDialog extends DialogFragment
         return builder.create();
     }
 
-    private boolean validate(@NonNull String name)
+    private boolean checkInvalid (@NonNull String name)
     {
         if (name.length() == 0)
         {
-            return false;
+            return true;
         }
 
         for (int i = 0; i < name.length(); ++i)
         {
             if (!Character.isLetterOrDigit(name.charAt(i)))
             {
-                return false;
+                return true;
             }
         }
 
-        return true;
+        return false;
     }
 
     public void setSaveListener (@NonNull SaveDetailsFinalized saveListener)

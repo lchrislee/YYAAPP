@@ -2,6 +2,7 @@ package com.lchrislee.yyaapp.views.canvas;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.support.annotation.ColorInt;
@@ -43,6 +44,7 @@ class CanvasViewInternal
         this.currentBrushColor = defaultColor;
         this.currentBrushWidth = defaultSize;
         history = new CanvasHistory();
+        canvasBrush.setColor(Color.WHITE);
         generateCurrentBrush();
     }
 
@@ -63,6 +65,7 @@ class CanvasViewInternal
     {
         internalBitmap = Bitmap.createBitmap(canvasWidth, canvasHeight, Bitmap.Config.ARGB_8888);
         internalCanvas = new Canvas(internalBitmap);
+        internalCanvas.drawRect(0,0,canvasWidth, canvasHeight, canvasBrush);
     }
 
     /*
@@ -89,6 +92,12 @@ class CanvasViewInternal
     ) {
         this.canvasWidth = width;
         this.canvasHeight = height;
+    }
+
+    @NonNull
+    Bitmap currentDrawing()
+    {
+        return this.internalBitmap;
     }
 
     /*

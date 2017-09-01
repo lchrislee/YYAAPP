@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 
 import com.lchrislee.yyaapp.fragments.dialogs.SaveDialog;
+import com.lchrislee.yyaapp.utilities.DataPersistence;
 import com.lchrislee.yyaapp.views.BrushSizeView;
 import com.lchrislee.yyaapp.views.PaletteView;
 import com.lchrislee.yyaapp.views.canvas.CanvasView;
@@ -13,9 +14,18 @@ public class PaintPresenter implements
     PaletteView.ColorSelect, BrushSizeView.StrokeSizeChange, SaveDialog.SaveDetailsFinalized
 {
 
+    public interface SaveFinished
+    {
+        void OnSaveFinished(boolean isSuccessful);
+    }
+
+    private static final String TAG = "PaintPresenter";
+
     private final PaletteView palette;
     private final CanvasView canvas;
     private final BrushSizeView brush;
+
+    private SaveFinished saveFinishedListener;
 
     public PaintPresenter (
         @NonNull CanvasView canvas,
@@ -76,6 +86,19 @@ public class PaintPresenter implements
     public void OnSave (
         @NonNull String fileName
     ) {
-        // TODO: Save using filename and the bitmap of canvas.
+        if(DataPersistence.save(fileName, canvas.drawing()))
+        {
+            saveFinishedListener.OnSaveFinished(true);
+        }
+        else if (saveFinishedListener != null)
+        {
+            saveFinishedListener.OnSaveFinished(false);
+        }
+    }
+
+    public void setSaveFinishedListener (
+        @NonNull SaveFinished saveFinishedListener
+    ) {
+        this.saveFinishedListener = saveFinishedListener;
     }
 }
