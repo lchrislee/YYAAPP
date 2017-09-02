@@ -1,10 +1,7 @@
 package com.lchrislee.yyaapp.utilities;
 
-import android.content.ContentResolver;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,21 +12,41 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class ImageIO
+public class SaveImageTask extends AsyncTask<Void, Void, Boolean>
 {
-    private static final String TAG = "ImageIO";
+
+    public interface SaveResultCallback
+    {
+        void onSaveResult(boolean isSuccessful);
+    }
+
+    private static final String TAG = "SaveImageTask";
     private static final String IMAGE_TYPE = ".png";
-    public static final int REQUEST_EXTERNAL = 100;
 
-    /*
-     * Saving
-     */
+    private final String imageName;
+    private final Bitmap image;
+    private final String appName;
 
-    public static boolean save (
+    private SaveResultCallback listener;
+
+    public SaveImageTask (
         @NonNull String appName,
         @NonNull String imageName,
         @NonNull Bitmap image
     ) {
+        this.imageName = imageName;
+        this.image = image;
+        this.appName = appName;
+    }
+
+    public void setSaveResultListener (SaveResultCallback listener)
+    {
+        this.listener = listener;
+    }
+
+    @Override
+    protected Boolean doInBackground (Void... voids)
+    {
         if (checkExternalNotWritable())
         {
             return false;
@@ -70,6 +87,17 @@ public class ImageIO
         return true;
     }
 
+    @Override
+    protected void onPostExecute (Boolean aBoolean)
+    {
+        super.onPostExecute(aBoolean);
+
+        if (listener != null)
+        {
+            listener.onSaveResult(aBoolean);
+        }
+    }
+
     private static boolean checkExternalNotWritable ()
     {
         return !Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
@@ -94,41 +122,5 @@ public class ImageIO
         }
 
         return albumDirectory;
-    }
-
-    /*
-     * Opening
-     */
-
-    public static @Nullable Bitmap load (
-        @NonNull ContentResolver resolver,
-        @NonNull Uri data
-    ) {
-        Bitmap output;
-        try
-        {
-            output = BitmapFactory.decodeStream(resolver.openInputStream(data));
-        } catch (FileNotFoundException e)
-        {
-            Log.e(TAG, "Could not open image from Uri.");
-            return null;
-        }
-
-        if (output.getWidth() > output.getHeight())
-        {
-            Matrix rotate = new Matrix();
-            rotate.postRotate(90);
-            output = Bitmap.createBitmap(
-                output,
-                0,
-                0, // Use bitmap from top left.
-                output.getWidth(),
-                output.getHeight(),
-                rotate,
-                true
-            );
-        }
-
-        return output;
     }
 }

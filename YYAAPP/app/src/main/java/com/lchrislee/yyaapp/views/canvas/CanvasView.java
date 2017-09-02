@@ -15,6 +15,8 @@ import android.view.View;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.lchrislee.yyaapp.R;
 
+import io.reactivex.Observable;
+
 /*
  * Since I never made a paint program, coordinating brush events is based off of this tutorial:
  * https://code.tutsplus.com/tutorials/android-sdk-create-a-drawing-app-touch-interaction--mobile-19202
@@ -137,24 +139,35 @@ public class CanvasView extends View
 
     public void undo ()
     {
-        if (internal.undo())
+        Observable<Boolean> validObserve = internal.undo();
+        if (validObserve == null)
         {
-            postInvalidate();
+            return;
         }
+
+        validObserve.subscribe(object -> postInvalidate());
     }
 
     public void redo ()
     {
-        if (internal.redo())
+        Observable<Boolean> validObserve = internal.redo();
+        if (validObserve == null)
         {
-            postInvalidate();
+            return;
         }
+
+        validObserve.subscribe(object -> postInvalidate());
     }
 
     public void useImage (
         @Nullable Bitmap image
     ) {
-        internal.useImage(image);
-        postInvalidate();
+        Observable<Boolean> successObservation = internal.useImage(image);
+        if (successObservation == null)
+        {
+            return;
+        }
+
+        successObservation.subscribe(isSuccess -> postInvalidate());
     }
 }

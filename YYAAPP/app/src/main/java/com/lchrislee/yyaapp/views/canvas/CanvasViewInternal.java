@@ -13,7 +13,8 @@ import android.support.annotation.Nullable;
 import com.lchrislee.yyaapp.views.canvas.model.BrushStroke;
 import com.lchrislee.yyaapp.views.canvas.model.CanvasHistory;
 
-import java.util.Iterator;
+import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
 
 /*
  * Since I never made a paint program, drawing on the Canvas is based off of this tutorial:
@@ -23,7 +24,6 @@ import java.util.Iterator;
 class CanvasViewInternal
 {
     private final Paint canvasBrush = new Paint(Paint.DITHER_FLAG);
-
 
     private Canvas internalCanvas;
     private Bitmap internalBitmap;
@@ -71,7 +71,7 @@ class CanvasViewInternal
     {
         if (isLoaded)
         {
-            setupCanvas(Bitmap.createScaledBitmap(loadedBitmap, canvasWidth, canvasHeight, false));
+            setupCanvas(loadedBitmap.copy(Bitmap.Config.ARGB_8888, true));
         }
         else
         {
@@ -119,18 +119,22 @@ class CanvasViewInternal
         return this.internalBitmap;
     }
 
-    void useImage (
+    Observable<Boolean> useImage (
         @Nullable Bitmap image
     ) {
         if (image == null)
         {
-            return;
+            return null;
         }
 
         clearHistory();
-        loadedBitmap = image;
-        isLoaded = true;
-        createBaseCanvas();
+        return Observable.fromCallable(() ->
+        {
+            loadedBitmap = Bitmap.createScaledBitmap(image, canvasWidth, canvasHeight, false);
+            isLoaded = true;
+            createBaseCanvas();
+            return true;
+        }).observeOn(Schedulers.computation());
     }
 
     /*
@@ -177,50 +181,54 @@ class CanvasViewInternal
         internalCanvas.drawPath(stroke.path, stroke.paint);
     }
 
-    private void drawHistory ()
+    private
+    @NonNull
+    Observable<Boolean> drawHistory ()
     {
         createBaseCanvas();
 
-        Iterator<BrushStroke> pathIterator = history.fromBeginning();
-        if (pathIterator == null)
+        return Observable.fromCallable( () ->
         {
-            return;
-        }
-
-        while (pathIterator.hasNext())
-        {
-            placeOnCanvas(pathIterator.next());
-        }
+            history.applyToStrokes(brushStroke -> {
+                if (brushStroke == null)
+                {
+                    return null;
+                }
+                placeOnCanvas(brushStroke);
+                return null;
+            });
+            return true;
+        }).observeOn(Schedulers.computation());
     }
 
     /*
      * History
      */
 
-    boolean undo()
+    @Nullable
+    Observable<Boolean> undo()
     {
         BrushStroke brushStroke = history.previousStroke();
         if (brushStroke == null)
         {
-            return false;
+            return null;
         }
 
         history.addUndo(brushStroke);
-        drawHistory();
-        return true;
+        return drawHistory();
     }
 
-    boolean redo()
+    @Nullable
+    Observable<Boolean> redo()
     {
         BrushStroke brushStroke = history.previousUndo();
         if (brushStroke == null)
         {
-            return false;
+            return null;
         }
 
         history.addStroke(brushStroke);
-        drawHistory();
-        return true;
+        return drawHistory();
     }
 
     void clearHistory ()

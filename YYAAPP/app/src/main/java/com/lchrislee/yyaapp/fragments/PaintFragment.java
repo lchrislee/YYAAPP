@@ -3,7 +3,6 @@ package com.lchrislee.yyaapp.fragments;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -22,7 +21,7 @@ import android.widget.Toast;
 
 import com.lchrislee.yyaapp.R;
 import com.lchrislee.yyaapp.presenters.PaintPresenter;
-import com.lchrislee.yyaapp.utilities.ImageIO;
+import com.lchrislee.yyaapp.utilities.LoadImageTask;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -141,14 +140,21 @@ public class PaintFragment extends Fragment
                         return;
                     }
 
-                    Bitmap image = ImageIO.load(getContext().getContentResolver(), data.getData());
-                    if (image == null)
-                    {
-                        toast(R.string.view_canvas_load_failure);
-                        break;
-                    }
+                    LoadImageTask task = new LoadImageTask(
+                        getContext().getContentResolver(),
+                        data.getData()
+                    );
 
-                    presenter.openImage(image);
+                    task.setLoadResultListener(image -> {
+                        if (image == null)
+                        {
+                            toast(R.string.view_canvas_load_failure);
+                            return;
+                        }
+
+                        presenter.openImage(image);
+                    });
+                    task.execute();
                 }
                 break;
             default:
@@ -169,7 +175,7 @@ public class PaintFragment extends Fragment
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch(requestCode)
         {
-            case ImageIO.REQUEST_EXTERNAL:
+            case LoadImageTask.REQUEST_EXTERNAL:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 {
                     displaySaveDialog();
@@ -203,7 +209,7 @@ public class PaintFragment extends Fragment
 
         requestPermissions(
             new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-            ImageIO.REQUEST_EXTERNAL
+            LoadImageTask.REQUEST_EXTERNAL
         );
         return true;
     }

@@ -3,7 +3,7 @@
 
     <!-- Stroke Seekbar values -->
     <integer name="seek_brush_progress_default">6</integer>
-    <integer name="seek_brush_step_count_default">13</integer>
+    <integer name="seek_brush_step_count_default">15</integer>
     <integer name="seek_brush_step_multiplier_default">2</integer>
 
     <!-- Dialogs -->

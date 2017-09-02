@@ -8,7 +8,7 @@ import android.view.View;
 
 import com.lchrislee.yyaapp.R;
 import com.lchrislee.yyaapp.fragments.dialogs.SaveDialog;
-import com.lchrislee.yyaapp.utilities.ImageIO;
+import com.lchrislee.yyaapp.utilities.SaveImageTask;
 import com.lchrislee.yyaapp.views.BrushSizeView;
 import com.lchrislee.yyaapp.views.PaletteView;
 import com.lchrislee.yyaapp.views.canvas.CanvasView;
@@ -70,12 +70,14 @@ public class PaintPresenter
     {
         SaveDialog fragment = SaveDialog.newInstance();
         fragment.setValidSaveListener( (appName, imageName) -> {
-            boolean isSuccessful = ImageIO.save(appName, imageName, canvas.drawing());
-
-            if (listener != null)
-            {
-                listener.onSaveFinished(isSuccessful);
-            }
+            SaveImageTask task = new SaveImageTask(appName, imageName, canvas.drawing());
+            task.setSaveResultListener(isSuccessful -> {
+                if (listener != null)
+                {
+                    listener.onSaveFinished(isSuccessful);
+                }
+            });
+            task.execute();
         });
         return fragment;
     }
