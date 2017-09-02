@@ -1,19 +1,19 @@
 package com.lchrislee.yyaapp.presenters;
 
 import android.graphics.Bitmap;
-import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.view.View;
 
+import com.lchrislee.yyaapp.R;
 import com.lchrislee.yyaapp.fragments.dialogs.SaveDialog;
 import com.lchrislee.yyaapp.utilities.ImageIO;
 import com.lchrislee.yyaapp.views.BrushSizeView;
 import com.lchrislee.yyaapp.views.PaletteView;
 import com.lchrislee.yyaapp.views.canvas.CanvasView;
 
-public class PaintPresenter implements
-    PaletteView.ColorSelectCallback, BrushSizeView.SizeChangeCallback, SaveDialog.ValidSaveCallback
+public class PaintPresenter
 {
 
     public interface SaveFinishedCallback
@@ -25,54 +25,24 @@ public class PaintPresenter implements
 
     private final CanvasView canvas;
 
-    private SaveFinishedCallback callbackListener;
+    private SaveFinishedCallback listener;
 
     public PaintPresenter (
-        @NonNull CanvasView canvas,
-        @NonNull PaletteView palette,
-        @NonNull BrushSizeView brush
+        @NonNull View holder
     ) {
-        brush.setCallbackListener(this);
-        palette.setCallbackListener(this);
-        this.canvas = canvas;
-        this.canvas.changeStrokeSize(brush.size());
-        this.canvas.changePaintColor(palette.color());
+        canvas = holder.findViewById(R.id.fragment_paint_canvas);
+
+        final BrushSizeView brush = holder.findViewById(R.id.fragment_paint_stroke_size);
+        brush.setSizeListener(canvas::changeStrokeSize);
+
+        final PaletteView palette = holder.findViewById(R.id.fragment_paint_palette);
+        palette.setColorSelectListener(canvas::changePaintColor);
     }
 
-    public void setCallbackListener (
+    public void setSaveFinishedListener (
         @NonNull SaveFinishedCallback callbackListener
     ) {
-        this.callbackListener = callbackListener;
-    }
-
-    /*
-     * Interfaces
-     */
-
-    @Override
-    public void onColorSelected (
-        @ColorInt int color
-    ) {
-        canvas.changePaintColor(color);
-    }
-
-    @Override
-    public void onSizeChanged (
-        float size
-    ) {
-        canvas.changeStrokeSize(size);
-    }
-
-    @Override
-    public void onSave (
-        @NonNull String appName,
-        @NonNull String imageName
-    ) {
-        boolean isSuccessful = ImageIO.save(appName, imageName, canvas.drawing());
-        if (callbackListener != null)
-        {
-            callbackListener.onSaveFinished(isSuccessful);
-        }
+        this.listener = callbackListener;
     }
 
     /*
@@ -99,7 +69,14 @@ public class PaintPresenter implements
     DialogFragment saveDialog ()
     {
         SaveDialog fragment = SaveDialog.newInstance();
-        fragment.setCallbackListener(this);
+        fragment.setValidSaveListener( (appName, imageName) -> {
+            boolean isSuccessful = ImageIO.save(appName, imageName, canvas.drawing());
+
+            if (listener != null)
+            {
+                listener.onSaveFinished(isSuccessful);
+            }
+        });
         return fragment;
     }
 

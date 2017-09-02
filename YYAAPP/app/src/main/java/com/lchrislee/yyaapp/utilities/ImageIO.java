@@ -121,7 +121,7 @@ public class ImageIO
             output = Bitmap.createBitmap(
                 output,
                 0,
-                0,
+                0, // Use bitmap from top left.
                 output.getWidth(),
                 output.getHeight(),
                 rotate,

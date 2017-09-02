@@ -1,7 +1,6 @@
 package com.lchrislee.yyaapp.fragments.dialogs;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -37,7 +36,7 @@ public class SaveDialog extends DialogFragment
         return dialogFragment;
     }
 
-    public void setCallbackListener (
+    public void setValidSaveListener (
         @NonNull ValidSaveCallback callbackListener
     ) {
         this.callbackListener = callbackListener;
@@ -61,46 +60,34 @@ public class SaveDialog extends DialogFragment
 
         builder.setPositiveButton(
             R.string.dialog_save_positive,
-            new DialogInterface.OnClickListener()
+            (dialogInterface, i) ->
             {
-                @Override
-                public void onClick (DialogInterface dialogInterface, int i)
+                String imageName = name.getText().toString();
+                if (checkInvalidName(imageName))
                 {
-                    String imageName = name.getText().toString();
-
-                    if (checkInvalidName(imageName))
-                    {
-                        Toast.makeText(
-                            getContext(),
-                            R.string.dialog_save_invalid_name,
-                            Toast.LENGTH_SHORT
-                        ).show();
-                        return;
-                    }
-
-                    if (callbackListener != null)
-                    {
-                        callbackListener.onSave(getString(R.string.app_name), imageName);
-                        SaveDialog.this.getDialog().dismiss();
-                    }
+                    Toast.makeText(
+                        getContext(),
+                        R.string.dialog_save_invalid_name,
+                        Toast.LENGTH_SHORT
+                    ).show();
+                    return;
                 }
-            });
+
+                if (callbackListener != null)
+                {
+                    callbackListener.onSave(getString(R.string.app_name), imageName);
+                }
+        });
 
         builder.setNeutralButton(
             R.string.dialog_save_cancel,
-            new DialogInterface.OnClickListener()
-            {
-                @Override
-                public void onClick (DialogInterface dialogInterface, int i)
-                {
-                    SaveDialog.this.getDialog().dismiss();
-                }
-            });
+            (dialogInterface, i) -> SaveDialog.this.getDialog().dismiss()
+        );
 
         return builder.create();
     }
 
-    private boolean checkInvalidName (@NonNull String name)
+    private boolean checkInvalidName (@NonNull CharSequence name)
     {
         if (name.length() == 0)
         {

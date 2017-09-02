@@ -12,21 +12,21 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.SeekBar;
 
+import com.jakewharton.rxbinding2.widget.RxSeekBar;
 import com.lchrislee.yyaapp.R;
 
-public class BrushSizeView extends FrameLayout implements SeekBar.OnSeekBarChangeListener
+public class BrushSizeView extends FrameLayout
 {
 
-    public interface SizeChangeCallback
+    public interface SizeSelectCallback
     {
         void onSizeChanged (@Dimension float size);
     }
 
     private static final String TAG = "StrokeSizeView";
 
-    private SizeChangeCallback callbackListener;
+    private SizeSelectCallback listener;
 
-    private float size;
     private int stepMultiplier;
 
     public BrushSizeView (Context context)
@@ -54,7 +54,8 @@ public class BrushSizeView extends FrameLayout implements SeekBar.OnSeekBarChang
         final View internalView = inflater.inflate(R.layout.view_brush, this, true);
 
         final SeekBar brushSize = internalView.findViewById(R.id.view_stroke_seek);
-        brushSize.setOnSeekBarChangeListener(this);
+
+        RxSeekBar.changes(brushSize).subscribe(this::onProgress);
 
         // 0 designates no default style listed in theme but useImage the default style.
         final TypedArray viewAttributes = getContext().getTheme().obtainStyledAttributes(
@@ -84,38 +85,25 @@ public class BrushSizeView extends FrameLayout implements SeekBar.OnSeekBarChang
         viewAttributes.recycle();
     }
 
-    public
-    @Dimension
-    float size ()
-    {
-        return size;
+    public void setSizeListener (
+        @NonNull SizeSelectCallback callbackListener
+    ) {
+        this.listener = callbackListener;
     }
 
-    @Override
-    public void onProgressChanged (SeekBar seekBar, int progress, boolean fromUser)
-    {
-        size = TypedValue.applyDimension(
+    private void onProgress(
+        int progress
+    ) {
+        float size = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
             (progress * stepMultiplier) + stepMultiplier,
             getResources().getDisplayMetrics()
         );
 
-        if (callbackListener != null)
+        if (listener != null)
         {
-            callbackListener.onSizeChanged(size);
+            listener.onSizeChanged(size);
         }
-    }
-
-    @Override
-    public void onStartTrackingTouch (SeekBar seekBar) {}
-
-    @Override
-    public void onStopTrackingTouch (SeekBar seekBar) {}
-
-    public void setCallbackListener (
-        @NonNull SizeChangeCallback callbackListener
-    ) {
-        this.callbackListener = callbackListener;
     }
 
 }

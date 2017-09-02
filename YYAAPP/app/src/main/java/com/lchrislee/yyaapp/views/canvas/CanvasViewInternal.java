@@ -197,28 +197,30 @@ class CanvasViewInternal
      * History
      */
 
-    void undo()
+    boolean undo()
     {
         BrushStroke brushStroke = history.previousStroke();
         if (brushStroke == null)
         {
-            return;
+            return false;
         }
 
         history.addUndo(brushStroke);
         drawHistory();
+        return true;
     }
 
-    void redo()
+    boolean redo()
     {
         BrushStroke brushStroke = history.previousUndo();
         if (brushStroke == null)
         {
-            return;
+            return false;
         }
 
         history.addStroke(brushStroke);
         drawHistory();
+        return true;
     }
 
     void clearHistory ()

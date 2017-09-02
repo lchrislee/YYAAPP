@@ -13,10 +13,9 @@ import android.widget.LinearLayout;
 
 import com.lchrislee.yyaapp.R;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class PaletteView extends LinearLayout
-        implements View.OnClickListener
 {
 
     public interface ColorSelectCallback
@@ -26,12 +25,12 @@ public class PaletteView extends LinearLayout
 
     private static final String TAG = "PaletteView";
 
-    private ArrayList<AppCompatImageButton> buttons;
+    private LinkedList<AppCompatImageButton> buttons;
 
     @ColorInt
     private int color;
 
-    private ColorSelectCallback callbackListener;
+    private ColorSelectCallback listener;
 
     public PaletteView (Context context)
     {
@@ -54,7 +53,7 @@ public class PaletteView extends LinearLayout
     private void initialize (
         @Nullable AttributeSet attrs
     ) {
-        buttons = new ArrayList<>();
+        buttons = new LinkedList<>();
 
         final TypedArray attributes = getContext().getTheme().obtainStyledAttributes(
             attrs,
@@ -86,52 +85,44 @@ public class PaletteView extends LinearLayout
             imageButton.setLayoutParams(params);
             imageButton.setTag(colorId);
             imageButton.setBackgroundColor(colorId);
-            imageButton.setOnClickListener(this);
+
+            // Cannot use RxBinding's subscription because I need the view to differentiate color.
+            imageButton.setOnClickListener(this::onClick);
+
             buttons.add(imageButton);
             addView(imageButton);
         }
 
-        color = (Integer) buttons.get(0).getTag();
-        buttons.get(0).setImageResource(android.R.drawable.ic_menu_view);
+        color = (Integer) buttons.getFirst().getTag();
+        buttons.getFirst().setImageResource(android.R.drawable.ic_menu_view);
 
         attributes.recycle();
     }
 
-    public
-    @ColorInt
-    int color ()
-    {
-        return color;
-    }
-
-    public void setCallbackListener (
+    public void setColorSelectListener (
         @NonNull ColorSelectCallback callbackListener
     ) {
-        this.callbackListener = callbackListener;
+        this.listener = callbackListener;
     }
 
-    @Override
-    public void onClick (View view)
-    {
-        designateCurrentColor((AppCompatImageButton) view);
-
-        color = (int) view.getTag();
-
-        if (callbackListener != null)
-        {
-            callbackListener.onColorSelected(color);
-        }
-    }
-
-    private void designateCurrentColor(
-        @NonNull AppCompatImageButton view
+    private void onClick (
+        @NonNull View view
     ) {
-        for (AppCompatImageButton button : buttons)
+        AppCompatImageButton button = (AppCompatImageButton) view;
+
+        for (AppCompatImageButton b : buttons)
         {
-            button.setImageDrawable(null);
+            b.setImageDrawable(null);
         }
 
-        view.setImageResource(android.R.drawable.ic_menu_view);
+        button.setImageResource(android.R.drawable.ic_menu_view);
+
+        color = (int) button.getTag();
+
+        if (listener != null)
+        {
+            listener.onColorSelected(color);
+        }
     }
 
 }

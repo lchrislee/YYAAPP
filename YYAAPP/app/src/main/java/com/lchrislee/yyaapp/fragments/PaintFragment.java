@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -22,14 +23,10 @@ import android.widget.Toast;
 import com.lchrislee.yyaapp.R;
 import com.lchrislee.yyaapp.presenters.PaintPresenter;
 import com.lchrislee.yyaapp.utilities.ImageIO;
-import com.lchrislee.yyaapp.views.BrushSizeView;
-import com.lchrislee.yyaapp.views.PaletteView;
-import com.lchrislee.yyaapp.views.canvas.CanvasView;
 
 import static android.app.Activity.RESULT_OK;
 
-public class PaintFragment extends Fragment implements
-    PaintPresenter.SaveFinishedCallback
+public class PaintFragment extends Fragment
 {
 
     private static final String TAG = "PaintFragment";
@@ -59,12 +56,8 @@ public class PaintFragment extends Fragment implements
         // Inflate the layout for this fragment
         final View holder = inflater.inflate(R.layout.fragment_paint, container, false);
 
-        final CanvasView canvas = holder.findViewById(R.id.fragment_paint_canvas);
-        final PaletteView palette = holder.findViewById(R.id.fragment_paint_palette);
-        final BrushSizeView brush = holder.findViewById(R.id.fragment_paint_stroke_size);
-
-        presenter = new PaintPresenter(canvas, palette, brush);
-        presenter.setCallbackListener(this);
+        presenter = new PaintPresenter(holder);
+        presenter.setSaveFinishedListener(this::onSaveFinished);
 
         setHasOptionsMenu(true);
 
@@ -144,22 +137,14 @@ public class PaintFragment extends Fragment implements
                 {
                     if (data == null)
                     {
-                        Toast.makeText(
-                            getContext(),
-                            R.string.fragment_paint_open_failure,
-                            Toast.LENGTH_SHORT
-                        ).show();
+                        toast(R.string.fragment_paint_open_failure);
                         return;
                     }
 
                     Bitmap image = ImageIO.load(getContext().getContentResolver(), data.getData());
                     if (image == null)
                     {
-                        Toast.makeText(
-                            getContext(),
-                            R.string.view_canvas_load_failure,
-                            Toast.LENGTH_SHORT
-                        ).show();
+                        toast(R.string.view_canvas_load_failure);
                         break;
                     }
 
@@ -191,11 +176,7 @@ public class PaintFragment extends Fragment implements
                 }
                 else
                 {
-                    Toast.makeText(
-                        getContext(),
-                        R.string.dialog_save_permission_failed,
-                        Toast.LENGTH_SHORT
-                    ).show();
+                    toast(R.string.dialog_save_permission_failed);
                 }
                 break;
             default:
@@ -233,17 +214,18 @@ public class PaintFragment extends Fragment implements
         fragment.show(getChildFragmentManager(), "SaveDialog");
     }
 
-    @Override
-    public void onSaveFinished (boolean isSuccessful)
+    private void onSaveFinished (boolean isSuccessful)
     {
         int displayString = isSuccessful
             ? R.string.fragment_paint_save_success
             : R.string.fragment_paint_save_failure;
 
-        Toast.makeText(
-            getContext(),
-            displayString,
-            Toast.LENGTH_SHORT
-        ).show();
+        toast(displayString);
+    }
+
+    private void toast(
+        @StringRes int message
+    ) {
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 }

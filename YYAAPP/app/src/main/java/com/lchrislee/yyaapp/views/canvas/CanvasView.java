@@ -12,6 +12,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.jakewharton.rxbinding2.view.RxView;
 import com.lchrislee.yyaapp.R;
 
 /*
@@ -51,6 +52,7 @@ public class CanvasView extends View
         @Dimension
         float defaultSize = getContext().getResources().getDimension(R.dimen.stroke_default);
         internal = new CanvasViewInternal(defaultColor, defaultSize);
+        RxView.touches(this).subscribe(this::onTouch);
     }
 
     /*
@@ -98,9 +100,9 @@ public class CanvasView extends View
     }
 
     // This assumes the user will only ever use one finger.
-    @Override
-    public boolean onTouchEvent (MotionEvent event)
-    {
+    private void onTouch (
+        MotionEvent event
+    ) {
         float xPos = event.getX();
         float yPos = event.getY();
 
@@ -116,11 +118,10 @@ public class CanvasView extends View
                 internal.finishStroke();
                 break;
             default:
-                return false;
+                return;
         }
 
         postInvalidate();
-        return true;
     }
 
     /*
@@ -136,14 +137,18 @@ public class CanvasView extends View
 
     public void undo ()
     {
-        internal.undo();
-        postInvalidate();
+        if (internal.undo())
+        {
+            postInvalidate();
+        }
     }
 
     public void redo ()
     {
-        internal.redo();
-        postInvalidate();
+        if (internal.redo())
+        {
+            postInvalidate();
+        }
     }
 
     public void useImage (
